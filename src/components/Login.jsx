@@ -51,25 +51,6 @@ export default function Login(props) {
         }
     }
 
-    function onSubmitClick(lo,pw,al){
-        const query = new URLSearchParams();
-
-            query.set("login",lo);
-            query.set("password",pw);
-            query.set("accesslevel",al);
-            
-            if (al === 0) {
-                navigate(`/data?${query.toString()}`)
-            } else if (al === 1) {
-                console.log(`agente?${query.toString()}`)
-                navigate(`/agente?${query.toString()}`)
-            } else {
-                console.error("Error ao acessar. Dados: "+lo+","+pw+","+al)
-                return alert("erro ao acessar")
-            }
-    }
-
-
 
     return (
         <div>
