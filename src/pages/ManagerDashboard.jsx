@@ -27,7 +27,7 @@ export default function ManagerDashboard() {
             
             <div className="max-w-sm space-y-2">
                 
-                <Title>Olá, Admin!</Title>
+                <Title>Olá, {login}!</Title>
                 
                 <div className="space-y-4 p-6 bg-slate-200 rounded-md shadow flex flex-col">
                     <Button
