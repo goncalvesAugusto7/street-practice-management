@@ -27,8 +27,7 @@ export default function NewService() {
     const createDataObject = (event) => {
         event.preventDefault()
 
-        setData(
-            {
+        const dataObj = {
             resident: selectedResident,
             date: date,
             hour: hour,
@@ -36,11 +35,20 @@ export default function NewService() {
             service: service,
             observations: observations,
         }    
-    )
+
+        setData(dataObj)
+        return dataObj
+        // const ok = Object.values(data).every(value => value !== "");
+        // if (!ok) return alert("Preencha todos os dados")
+        
+        // return alert("Cadastro feito com sucesso!")
+    }
+    const checkData = (data) => {
         const ok = Object.values(data).every(value => value !== "");
         if (!ok) return alert("Preencha todos os dados")
         
         return alert("Cadastro feito com sucesso!")
+
     }
 
 
@@ -98,6 +106,11 @@ export default function NewService() {
             <form 
                 className="space-y-4 p-6 bg-white rounded-md shadow flex flex-col"
             >
+                <h2 
+                    className="text-2xl font-bold text-center mb-2">
+                    Novo Atendimento
+                </h2>
+        
                 <p className="justify-center flex">Morador</p>
                 <select 
                     onClick={getResidents}
@@ -157,7 +170,10 @@ export default function NewService() {
                 >
                 </textarea>
                                 
-                <Button onClick={createDataObject}>Registrar</Button>
+                <Button onClick={(e)=>{
+                    const dataObj = createDataObject(e);
+                    checkData(dataObj);
+                }}>Registrar</Button>
             </form>
             
 

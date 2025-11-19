@@ -1,9 +1,10 @@
 import { useState } from "react"
 import Input from "../../../components/Input"
 import Button from "../../../components/Button";
-
+import moment from "moment";
 
 export default function RegisterResident() {
+    const [loading,setLoading] = useState(true)
     const [name,setName] = useState("");
     const [dayOfBirth,setDayOfBirth] = useState("");
     const [sex,setSex] = useState("");
@@ -13,30 +14,46 @@ export default function RegisterResident() {
         dayOfBirth: "",
         sex: "",
         initialClinicalHistory: ""
-})
-
+    })
+    
     const createDataObject = (event)=>{
         event.preventDefault();
 
-        setData({
+        const dataObj = {
             name: name,
             dayOfBirth: dayOfBirth,
             sex: sex,
             initialClinicalHistory: initialClinicalHistory
-        })
-        const ok = Object.values(data).every(value => value !== "")
-        if (!ok) {
-            return alert("Preencha todos os campos")
         }
-        return alert("Cadastro feito com sucesso!")
+        setData()
+
+        return dataObj
     }
+
+    const checkData = (data) => {
+        const ok = Object.values(data).every(value => value.trim() !== "");
+
+        if (!ok) {
+            alert("Preencha todos os campos");
+            return false;
+            }
+
+            alert("Cadastro feito com sucesso!");
+            return true;
+    };
+
     
     return (
         <div>
             <form 
                 className="space-y-4 p-6 bg-white rounded-md shadow flex flex-col"
             >
-                <p className="justify-center flex">Nome</p>
+                <h2 
+                    className="text-2xl font-bold text-center mb-2">
+                    Cadastro de novo morador
+                </h2>
+
+                <p className="justify-center flex">Nome completo</p>
                 <Input 
                     type="text" 
                     placeholder="Digite o nome do morador"
@@ -80,7 +97,10 @@ export default function RegisterResident() {
                     className="bg-slate-200 shadow border border-slate-300 rounded-md"
                 />
                 
-                <Button onClick={createDataObject}>Cadastrar</Button>
+                <Button onClick={(e)=>{
+                    const dataObj = createDataObject(e);
+                    checkData(dataObj);
+                }}>Cadastrar</Button>
             </form>
         </div>
     )
