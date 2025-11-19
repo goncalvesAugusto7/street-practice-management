@@ -35,7 +35,9 @@ export default function ManagerDashboard() {
                     >
                         Gerenciar usuários
                     </Button>
-                    <Button>
+                    <Button
+                        onClick={() => navigate('/admin/report')}
+                    >
                         Gerar Relatórios
                     </Button>
                     <Button
