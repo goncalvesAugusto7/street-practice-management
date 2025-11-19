@@ -60,6 +60,23 @@ export default [
             responsibleProfessional: "Técnico em enfermagem"
           },
 
+        ],
+        locations: [
+          {
+            id: 1,
+            latitude: -2.554899, 
+            longitude: -44.265552
+          },
+          {
+            id: 2,
+            latitude: -2.559202, 
+            longitude:-44.307785
+          },
+          {
+            id: 3,
+            latitude: -2.527992, 
+            longitude:-44.254127
+          }
         ]
       }
     }

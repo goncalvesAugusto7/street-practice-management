@@ -10,8 +10,8 @@ export default function NewService() {
     const [hour,setHour] = useState("");
     const [location,setLocation] = useState("");
     const [locationOutput, setLocationOutput] = useState("")
-    const [service,setService] = useState("")
-    const [selectedService,setSelectedService] = useState([]);
+    const [service,setService] = useState([])
+    const [selectedService,setSelectedService] = useState("");
     const [observations,setObservations] = useState("")
     const [data,setData] = useState(
         {
