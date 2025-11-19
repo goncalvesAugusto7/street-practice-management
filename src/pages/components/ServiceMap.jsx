@@ -64,7 +64,7 @@ export default function ServiceMap() {
     return (
         <div className="bg-green-100 rounded-md p-2 border-green-700 border-2">
                 
-                <h2 class="text-2xl font-bold text-green-600 text-center mb-2">
+                <h2 className="text-2xl font-bold text-green-600 text-center mb-2">
                     Mapa dos Atendimentos
                 </h2>            
                 

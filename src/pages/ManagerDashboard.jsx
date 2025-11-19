@@ -1,7 +1,8 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState } from "react";
 import Title from "../components/Title";
 import Button from "../components/Button";
-
+import ServiceMap from "./components/ServiceMap";
 
 export default function ManagerDashboard() {
 
@@ -10,6 +11,14 @@ export default function ManagerDashboard() {
     const login = searchParams.get("login");
     const password = searchParams.get("password");
     const accesslevel = searchParams.get("accesslevel");
+
+    const [selected, setSelected] = useState("")
+
+
+    const componentsMap = {
+        serviceMap: ServiceMap
+    }
+    const SelectedComponent = componentsMap[selected]
 
     return (
         <div className="w-screen h-screen bg-blue-400 flex justify-center p-6">
@@ -25,12 +34,17 @@ export default function ManagerDashboard() {
                     <Button>
                         Gerar Relatórios
                     </Button>
-                    <Button>
+                    <Button
+                        onClick={()=> setSelected("serviceMap")}
+                    >
                         Consultar mapa de atendimentos
                     </Button>
                 </div>
             </div>
-            
+            <div className="w-full max-w-sm space-y-2">
+                {SelectedComponent ? <SelectedComponent/> : <p></p>}
+            </div>
+
         </div>
     )
 }
