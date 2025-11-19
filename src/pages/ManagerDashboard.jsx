@@ -3,6 +3,7 @@ import { useState } from "react";
 import Title from "../components/Title";
 import Button from "../components/Button";
 import ServiceMap from "./components/ServiceMap";
+import ManageUsers from "./components/manager/ManageUsers";
 
 export default function ManagerDashboard() {
 
@@ -16,19 +17,22 @@ export default function ManagerDashboard() {
 
 
     const componentsMap = {
+        manageUsers: ManageUsers,
         serviceMap: ServiceMap
     }
     const SelectedComponent = componentsMap[selected]
 
     return (
-        <div className="w-screen h-screen bg-blue-400 flex justify-center p-6">
+        <div className="w-screen h-screen bg-blue-400 flex flex-row justify-center p-6 items-center gap-4">
             
-            <div className="w-[500px] space-y-4">
+            <div className="max-w-sm space-y-2">
                 
                 <Title>Olá, Admin!</Title>
                 
                 <div className="space-y-4 p-6 bg-slate-200 rounded-md shadow flex flex-col">
-                    <Button>
+                    <Button
+                        onClick={()=> setSelected("manageUsers")}
+                    >
                         Gerenciar usuários
                     </Button>
                     <Button>

@@ -18,12 +18,14 @@ export default [
         ],
         residents: [
           { 
+            id: 1,
             name: "Peter Parker", 
             dateOfBirth: "10-08-1962", 
             sex: "masculino",
             initialClinicalHistory: "paciente estava com quadros de alergia e envenenamento após picada de aranha"
         },
           { 
+            id: 2,
             name: "Naruto Uzumaki", 
             dateOfBirth: "21-09-1999", 
             sex: "masculino",
@@ -32,30 +34,38 @@ export default [
         ],
         services: [
           {
-            type:"Atendimento Clínico Geral",
+
+            id: 1,
+            type: "Atendimento Clínico Geral",
             responsibleProfessional: "Técnico em enfermagem"
           },
           {
+            id: 1,
             type:"Primeiros Socorros",
             responsibleProfessional: "Técnico em enfermagem"
           },
           {
+            id: 2,
             type:"Vacinação",
             responsibleProfessional: "Técnico em enfermagem"
           },
           {
+            id: 3,
             type:"Teste Rápido",
             responsibleProfessional: "Técnico em enfermagem"
           },
           {
+            id: 4,
             type:"Acolhimento e Escuta Qualificada",
             responsibleProfessional: "Técnico em enfermagem"
           },
           {
+            id: 5,
             type:"Orientações Psicossociais",
             responsibleProfessional: "Técnico em enfermagem"
           },
           {
+            id: 6,
             type:"Encaminhamento para Tratamento",
             responsibleProfessional: "Técnico em enfermagem"
           },
@@ -76,6 +86,18 @@ export default [
             id: 3,
             latitude: -2.527992, 
             longitude:-44.254127
+          }
+        ],
+        reports: [
+          {
+            residentId: 1,
+            serviceId: 2,
+            locationId: 3
+          },
+          {
+            residentId: 2,
+            serviceId: 4,
+            locationId: 2
           }
         ]
       }
