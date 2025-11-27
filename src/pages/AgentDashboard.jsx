@@ -14,7 +14,7 @@ export default function AgentDashboard() {
   const password = searchParams.get("password");
   const accesslevel = searchParams.get("accesslevel");
 
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const componentsMap = {
@@ -23,14 +23,14 @@ export default function AgentDashboard() {
     serviceMap: ServiceMap,
   };
   const componentsList = [
-    { label: "Novo Atendimento", component: NewService },
-    { label: "Cadastrar Morador", component: RegisterResident },
-    { label: "Consultar mapa de atendimentos", component: ServiceMap },
+    { label: "Novo Atendimento", key: "newService" },
+    { label: "Cadastrar Morador", key: "registerResident" },
+    { label: "Consultar mapa de atendimentos", key: "serviceMap" },
   ];
-  const SelectedComponent = componentsList[selected];
+  const SelectedComponent = componentsMap[selected];
 
   const handleMenuItemClick = (item) => {
-    setSelected(item.component);
+    setSelected(item.key);
     setIsMenuOpen(false);
   };
 
@@ -43,13 +43,20 @@ export default function AgentDashboard() {
         isMenuOpen={isMenuOpen}
         toggleMenu={() => {
           setIsMenuOpen(!isMenuOpen);
-          console.log("foi clicado. menu aberto? " + isMenuOpen);
+          console.log(
+            "foi clicado. menu aberto? " +
+              isMenuOpen +
+              ". selected: " +
+              selected +
+              ". lista de componentes: "
+          );
+          console.table(componentsList[0]);
         }}
       />
 
       {/* area do conteudo */}
       <main className="container mx-auto px-4 py-6">
-        <Title>Olá, {login}!</Title>
+        {/* <Title>Olá, {login}!</Title> */}
         <div className="w-full max-w-4xl">
           {SelectedComponent ? (
             <SelectedComponent />

@@ -57,29 +57,33 @@ export default function Header({
           {/* menu desktop (escondido no mobile) */}
           <nav className="hidden md:flex space-x-6">
             {menuItems.map((item) => {
-              <button
-                key={item.key || item.label}
-                onClick={() => onMenuItemClick(item)}
-                clasName="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-50 transition"
-              >
-                {item.label}
-              </button>;
+              return (
+                <button
+                  key={item.key || item.label}
+                  onClick={() => onMenuItemClick(item)}
+                  className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-50 transition"
+                >
+                  {item.label}
+                </button>
+              );
             })}
           </nav>
         </div>
 
         {/* menu mobile */}
         {isMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-gray-200 flex flex-col">
-            <div className="md:hidden py-4 border-t border-gray-200">
+          <nav className="md:hidden py-4 border-t border-gray-200">
+            <div className="flex flex-col space-y-2">
               {menuItems.map((item) => {
-                <button
-                  key={item.key || item.label}
-                  onClick={() => onMenuItemClick(item)}
-                  className="text-left text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-100 w-full"
-                >
-                  {item.label}
-                </button>;
+                return (
+                  <button
+                    key={item.key || item.label}
+                    onClick={() => onMenuItemClick(item)}
+                    className="text-left text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-100 w-full"
+                  >
+                    {item.label}
+                  </button>
+                );
               })}
             </div>
           </nav>
