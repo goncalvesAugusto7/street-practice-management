@@ -35,7 +35,7 @@ export default function AgentDashboard() {
   };
 
   return (
-    <div className="w-screen h-screen bg-blue-400 justify-center p-6 items-center gap-4">
+    <div className="min-h-screen bg-blue-400 flex flex-col">
       <Header
         title="Saúde na Rua"
         menuItems={componentsList}
@@ -55,14 +55,14 @@ export default function AgentDashboard() {
       />
 
       {/* area do conteudo */}
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-6 pt-16 flex-1">
         {/* <Title>Olá, {login}!</Title> */}
         <div className="w-full max-w-4xl">
           {SelectedComponent ? (
             <SelectedComponent />
           ) : (
             <p className="text-gray-500 text-center py-10">
-              Selecione uma opção.
+              Selecione uma opção do menu.
             </p>
           )}
         </div>
