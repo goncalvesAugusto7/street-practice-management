@@ -75,33 +75,38 @@ export default function Header({
 
       {/* menu mobile sobreposto */}
       {isMenuOpen && (
-        <>
-          {/* fundo escurecido */}
-          <div
-            className="fixed inset-0 bg-black bg-opacity-40 z-40"
-            onClick={toggleMenu}
-            aria-hidden="true"
-          />
-
-          {/* menu deslizante por cima */}
-          <nav className="fixed top-16 left-0 right-0 bg-white shadow-lg z-50">
-            <div className="container mx-auto px-4 py-4 flex flex-col space-y-2">
-              {menuItems.map((item) => (
-                <button
-                  key={item.key || item.label}
-                  onClick={() => {
-                    onMenuItemClick(item);
-                    toggleMenu();
-                  }}
-                  className="text-left text-gray-800 hover:text-blue-600 font-medium py-3 px-2 rounded-md hover:bg-gray-100 w-full"
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </nav>
-        </>
+        <div
+          className="fixed inset-0 bg-black/40 z-40"
+          onClick={toggleMenu}
+          aria-hidden="true"
+        />
       )}
+
+      {/* menu deslizante por cima */}
+      <nav
+        className={`fixed top-16 left-0 right-0 bg-white shadow-lg z-50
+          transition-all duration-300 ease-in-out
+          ${
+            isMenuOpen
+              ? "opacity-100 visible translate-y-0 pointer-events-auto"
+              : "opacity-0 invisible -translate-y-full pointer-events-none"
+          }`}
+      >
+        <div className="container mx-auto px-4 py-4 flex flex-col space-y-2">
+          {menuItems.map((item) => (
+            <button
+              key={item.key || item.label}
+              onClick={() => {
+                onMenuItemClick(item);
+                toggleMenu();
+              }}
+              className="text-left text-gray-800 hover:text-blue-600 font-medium py-3 px-2 rounded-md hover:bg-gray-100 w-full"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </nav>
     </>
   );
 }
