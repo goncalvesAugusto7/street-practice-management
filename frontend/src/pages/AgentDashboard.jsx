@@ -1,6 +1,3 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-import Title from "../components/Title";
-import Button from "../components/Button";
 import { useState } from "react";
 import RegisterResident from "./components/agent/RegisterResident";
 import NewService from "./components/agent/NewService";
@@ -8,12 +5,6 @@ import ServiceMap from "./components/ServiceMap";
 import Header from "../components/Header";
 
 export default function AgentDashboard() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const login = searchParams.get("login");
-  const password = searchParams.get("password");
-  const accesslevel = searchParams.get("accesslevel");
-
   const [selected, setSelected] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -55,7 +46,7 @@ export default function AgentDashboard() {
       />
 
       {/* area do conteudo */}
-      <main className="container mx-auto px-4 py-6 pt-16 flex-1">
+      <main className="container mx-auto px-4 py-6 pt-20">
         {/* <Title>Olá, {login}!</Title> */}
         <div className="w-full max-w-4xl">
           {SelectedComponent ? (
@@ -67,26 +58,6 @@ export default function AgentDashboard() {
           )}
         </div>
       </main>
-
-      {/* <div className="max-w-sm space-y-2">
-        <Title>Olá, {login}!</Title>
-
-        <div className="space-y-4 p-6 bg-slate-200 rounded-md shadow flex flex-col">
-          <Button onClick={() => setSelected("newService")}>
-            Novo Atendimento
-          </Button>
-          <Button onClick={() => setSelected("registerResident")}>
-            Cadastrar Morador
-          </Button>
-          <Button onClick={() => setSelected("serviceMap")}>
-            Consultar mapa de atendimentos
-          </Button>
-        </div>
-      </div> */}
-
-      {/* <div className="w-full max-w-sm space-y-2">
-        {SelectedComponent ? <SelectedComponent /> : <p></p>}
-      </div> */}
     </div>
   );
 }
