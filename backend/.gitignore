@@ -1,0 +1,13 @@
+# Ambientes virtuais Python
+venv/
+env/
+.venv/
+ENV/
+
+# Arquivos do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.ipynb_checkpointss

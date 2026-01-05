@@ -7,7 +7,9 @@ import axios from "axios";
 export default function App() {
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8080/api/users");
+      const response = await axios.get(
+        "https://animated-meme-r4p96jvqq6r43wr-8080.app.github.dev/api/users"
+      );
       console.log(response.data.logins);
     } catch (error) {
       console.error("Error fetching data:", error);
