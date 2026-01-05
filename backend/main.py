@@ -7,12 +7,104 @@ cors = CORS(app, origins='*')
 @app.route('/api/users', methods=['GET'])
 def users():
     return jsonify(
-        {
-            "users": [
-                'agente',
-                'admin'
-            ]
+       {
+        'logins': [
+          { 
+            'login': "admin", 
+            'password': "123", 
+            'accessLevel': 0 
+        },
+          { 
+            'login': "agente", 
+            'password': "123", 
+            'accessLevel': 1 
         }
+        ],
+        'residents': [
+          { 
+            'id': 1,
+            'name': "Peter Parker", 
+            'dateOfBirth': "10-08-1962", 
+            'sex': "masculino",
+            'initialClinicalHistory': "paciente estava com quadros de alergia e envenenamento após picada de aranha"
+        },
+          { 
+            'id': 2,
+            'name': "Naruto Uzumaki", 
+            'dateOfBirth': "21-09-1999", 
+            'sex': "masculino",
+            'initialClinicalHistory': "morador da aldeia da folha tem uma raposa dentro do estômago dele"
+        }
+        ],
+        'services': [
+          {
+
+            'id': 1,
+            'type': "Atendimento Clínico Geral",
+            'responsibleProfessional': "Técnico em enfermagem"
+          },
+          {
+            'id': 1,
+            'type':"Primeiros Socorros",
+            'responsibleProfessional': "Técnico em enfermagem"
+          },
+          {
+            'id': 2,
+            'type':"Vacinação",
+            'responsibleProfessional': "Técnico em enfermagem"
+          },
+          {
+            'id': 3,
+            'type':"Teste Rápido",
+            'responsibleProfessional': "Técnico em enfermagem"
+          },
+          {
+            'id': 4,
+            'type':"Acolhimento e Escuta Qualificada",
+            'responsibleProfessional': "Técnico em enfermagem"
+          },
+          {
+            'id': 5,
+            'type':"Orientações Psicossociais",
+            'responsibleProfessional': "Técnico em enfermagem"
+          },
+          {
+            'id': 6,
+            'type':"Encaminhamento para Tratamento",
+            'responsibleProfessional': "Técnico em enfermagem"
+          },
+
+        ],
+        'locations': [
+          {
+            'id': 1,
+            'latitude': -2.554899, 
+            'longitude': -44.265552
+          },
+          {
+            'id': 2,
+            'latitude': -2.559202, 
+            'longitude':-44.307785
+          },
+          {
+            'id': 3,
+            'latitude': -2.527992, 
+            'longitude':-44.254127
+          }
+        ],
+        'reports': [
+          {
+            'residentId': 1,
+            'serviceId': 2,
+            'locationId': 3
+          },
+          {
+            'residentId': 2,
+            'serviceId': 4,
+            'locationId': 2
+          }
+        ]
+      }
     )
 
 if __name__ == '__main__':
