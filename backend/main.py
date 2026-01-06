@@ -1,8 +1,33 @@
+from App import create_app
+from App.extensions import db
+
+app = create_app()
+
+if __name__ == '__main__':
+  with app.app_context():
+    db.create_all()
+  app.run(host='0.0.0.0', port=8080, debug=True)
+
+'''
 from flask import Flask, jsonify
+from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 cors = CORS(app, origins='*')
+
+db = SQLAlchemy(app)
+
+@app.route('/')
+def home():
+  return 'flask'
 
 @app.route('/api/users', methods=['GET'])
 def users():
@@ -109,3 +134,4 @@ def users():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=8080)
+    '''
