@@ -16,15 +16,17 @@ def create_user():
            data.get('accessLevel')):
         return jsonify({'error': 'Dados não preenchidos corretametne'}), 400
 
-    user = User(name=data['name'], 
+    user = User(publicId=str(uuid.uuid4()),
+                name=data['name'], 
                 cpf=data['cpf'],
                 login=data['login'],
                 email=data['email'],
-                password=data['password'],
                 accessLevel=data['password'])
-    
+
+    user.set_password(data['password'])
     db.session.add(user)
     db.session.commit()
+    
     return jsonify(user.to_dict()), 201
 
 @user_bp.route('/',methods=['GET'])

@@ -1,11 +1,25 @@
 from App import create_app
 from App.extensions import db
+import uuid
 
 app = create_app()
 
 if __name__ == '__main__':
   with app.app_context():
     db.create_all()
+    from App.models import User
+    if not User.query.first():
+      user = User(
+        publicId=str(uuid.uuid4()),
+        name="Augusto Gonçalves Santos",
+        cpf="039.544.613-90",
+        login="admin",
+        email="augusto@email.com",
+        accessLevel=0
+      )
+      user.set_password("123")
+      db.session.add(user)
+      db.session.commit()
   app.run(host='0.0.0.0', port=8080, debug=True)
 
 '''
