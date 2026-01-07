@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import Input from "./Input";
 import Loading from "./LoadingIcon"
+import api from '../services/api'
 
 export default function Login(props) {
     
@@ -28,34 +28,38 @@ export default function Login(props) {
         }
 
         try {
-            const response = await fetch("http://localhost:8080/auth/login", {
-                method: 'POST',
+            const response = await api.post("/auth/login", {
+                userLogin,
+                userPassword
+            },
+            {
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({userLogin,userPassword}),
+                    'Content-Type': 'application/json'
+                }
             });
-            const data = await response.json();
 
-            if (!response.ok) {
-                setError(data.message)
-                throw new Error(data.message || 'Login falhou')
-            }
+            const { token, access_level} = response.data
 
-            localStorage.setItem('token', data.token)
+            localStorage.setItem('token', token)
             
             setLoading(false)
             
-            if (data.access_level == 0) {
+            if (access_level == 0) {
                 navigate(`/admin`)
-            } else if (data.access_level == 1) {
+            } else if (access_level == 1) {
                 navigate(`/agente`)
             } else {
                 return alert("Erro ao acessar")
             }
 
         } catch (error) {
-            setLoading(false)
+            if (error.response) {
+                setError(error.response.data.message || 'adfasf login');
+            } else {
+                setError('Erro de conexão com o servidor');
+            }
+        } finally {
+            setLoading(false);
         }
     }
 

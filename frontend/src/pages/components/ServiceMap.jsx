@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useState, useEffect } from "react";
 
 import Loading from "../../components/LoadingIcon"
+import api from "../../services/api";
 
 export default function ServiceMap() {
   const [loading, setLoading] = useState(true);
@@ -11,8 +12,8 @@ export default function ServiceMap() {
   const getLocations = async (event) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetch("http://localhost:8080/api/location");
-        const data = await response.json();
+        const response = await api.get("/api/location/");
+        const data = response.data;
         console.log(data);
 
         setLocations(data);
