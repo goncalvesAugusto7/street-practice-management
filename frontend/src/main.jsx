@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import AgentDashboard from './pages/AgentDashboard.jsx'
 import ManagerDashboard from './pages/ManagerDashboard.jsx'
 import Report from './pages/Report.jsx'
+import Profile from './pages/Profile.jsx'
 import "leaflet/dist/leaflet.css";
 
 const router = createBrowserRouter([
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
       path: "/admin/report",
       element: <Report />
+  },
+  {
+      path: "/admin/profile",
+      element: <Profile />
   },
 ])
 

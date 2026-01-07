@@ -21,7 +21,7 @@ def create_user():
                 cpf=data['cpf'],
                 login=data['login'],
                 email=data['email'],
-                access_level=data['password'])
+                access_level=data['access_level'])
 
     user.set_password(data['password'])
     db.session.add(user)

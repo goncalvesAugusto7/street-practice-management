@@ -15,6 +15,7 @@ class User(db.Model):
     email = db.Column(db.String(70), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     access_level = db.Column(db.Integer(), nullable=False)
+    #profile_picture = Column(String, nullable=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -29,6 +30,7 @@ class User(db.Model):
             "cpf": self.cpf,
             "login": self.login,
             "email": self.email,
+            "access_level": self.access_level
         }
 
 class Location(db.Model):
