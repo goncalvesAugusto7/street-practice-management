@@ -10,7 +10,8 @@ export default function App() {
       const response = await axios.get(
         "http://localhost:8080/api/users"
       );
-      console.log(response.data.logins);
+      console.log("dados recebidos: ");
+      console.table(response.data)
     } catch (error) {
       console.error("Error fetching data:", error);
     }

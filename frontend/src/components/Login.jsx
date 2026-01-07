@@ -1,55 +1,64 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import Input from "./Input";
+import Loading from "./LoadingIcon"
 
 export default function Login(props) {
-
-    const [userLogin, setUserLogin] = useState("");
-    const [userPassword, setPassword] = useState("");
-    const [userAccessLevel, setUserAccessLevel] = useState(-1);
     
     const navigate = useNavigate();
+    
+    const [userLogin, setUserLogin] = useState("");
+    const [userPassword, setPassword] = useState("");
+    const [error,setError] = useState('')
+    const [loading,setLoading] = useState(false)
+    const [filledFields,setFilledFields] = useState('')
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-       
+        setError('')
+        setFilledFields('')
+        setLoading(true)
+        
         if (!userLogin.trim() || !userPassword.trim()) {
-            return alert("Preencha todos os campos")
+            setLoading(false)
+            setFilledFields("Preencha todos os campos")
+            return
         }
 
         try {
-            const response = await fetch("/api/routes");
+            const response = await fetch("http://localhost:8080/auth/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({userLogin,userPassword}),
+            });
             const data = await response.json();
 
-            const users = data.logins;
+            if (!response.ok) {
+                setError(data.message)
+                throw new Error(data.message || 'Login falhou')
+            }
 
-            const userFound = users.find(
-                (user) => user.login == userLogin && user.password === userPassword
-            );
-
-            if (!userFound) {
-                return alert("Falha no login");
-            } 
-
-            const query = new URLSearchParams({
-                login: userFound.login,
-                password: userFound.password,
-                accesslevel: userFound.accessLevel
-            })
+            localStorage.setItem('token', data.token)
             
-            if (userFound.accessLevel == 0) {
-                navigate(`/admin?${query.toString()}`)
-            } else if (userFound.accessLevel == 1) {
-                navigate(`/agente?${query.toString()}`)
+            setLoading(false)
+            
+            if (data.accessLevel == 0) {
+                navigate(`/admin`)
+            } else if (data.accessLevel == 1) {
+                navigate(`/agente`)
             } else {
-                return alert("erro ao acessar")
+                return alert("Erro ao acessar")
             }
 
         } catch (error) {
-            console.error("Error: " + error);
+            setLoading(false)
         }
     }
+
 
 
     return (
@@ -68,11 +77,22 @@ export default function Login(props) {
                     onChange={(e)=> setPassword(e.target.value)}
                 />
                 <button
-                    className="bg-slate-500 text-white px-4 py-2 rounded-md font-medium"
+                    className="flex items-center justify-center bg-slate-500 text-white px-4 py-2 rounded-md font-medium"
+                    disabled={loading}
                     onClick={handleSubmit}
                 >
-                    Entrar
+                    {loading ? <Loading/> : 'Entrar'}
                 </button>
+                {error && (
+                    <p className="text-sm text-red-600">
+                        {error}
+                    </p>
+                )}
+                {filledFields && (
+                    <p className="text-lg text-center text-yellow-600 drop-shadow-lg">
+                        {filledFields}
+                    </p>
+                )}
             </form>
         </div>
     )

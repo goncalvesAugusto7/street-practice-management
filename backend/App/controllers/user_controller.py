@@ -32,4 +32,5 @@ def create_user():
 @user_bp.route('/',methods=['GET'])
 def get_json():
     users = User.query.all()
+
     return jsonify([user.to_dict() for user in users])

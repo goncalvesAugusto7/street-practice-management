@@ -22,11 +22,9 @@ class User(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id,
             "publicId": self.publicId,
             "name": self.name,
             "cpf": self.cpf,
             "login": self.login,
             "email": self.email,
-            "password": self.password
         }

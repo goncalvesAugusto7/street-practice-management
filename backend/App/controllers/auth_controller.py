@@ -9,11 +9,11 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    login = data.get('login')
-    password = data.get('password')
+    login = data.get('userLogin')
+    password = data.get('userPassword')
 
     if not login or not password:
-        return jsonify({'message': 'Login e senha obrigatórios'}), 400
+        return jsonify({'message': ' from api: Login e senha obrigatórios'}), 400
 
     user = User.query.filter_by(login=login).first()
 
@@ -21,7 +21,7 @@ def login():
         return jsonify({'message': 'Credenciais inválidas'}), 401
 
     payload = {
-        'public_id': user.public_id,
+        'public_id': user.publicId,
         'exp' : datetime.now(timezone.utc) + timedelta(minutes=30)
     }
 
@@ -31,4 +31,7 @@ def login():
         algorithm='HS256'
     )
 
-    return jsonify({'token' : token}), 200
+    return jsonify({
+        'token' : token,
+        'accessLevel' : user.accessLevel
+    }), 200
