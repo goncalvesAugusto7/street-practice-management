@@ -10,12 +10,12 @@ if __name__ == '__main__':
     from App.models import User
     if not User.query.first():
       user = User(
-        publicId=str(uuid.uuid4()),
+        public_id=str(uuid.uuid4()),
         name="Augusto Gonçalves Santos",
         cpf="039.544.613-90",
         login="admin",
         email="augusto@email.com",
-        accessLevel=0
+        access_level=0
       )
       user.set_password("123")
       db.session.add(user)

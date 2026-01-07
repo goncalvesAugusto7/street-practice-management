@@ -21,7 +21,7 @@ def login():
         return jsonify({'message': 'Credenciais inválidas'}), 401
 
     payload = {
-        'public_id': user.publicId,
+        'public_id': user.public_id,
         'exp' : datetime.now(timezone.utc) + timedelta(minutes=30)
     }
 
@@ -33,5 +33,5 @@ def login():
 
     return jsonify({
         'token' : token,
-        'accessLevel' : user.accessLevel
+        'access_level' : user.access_level
     }), 200

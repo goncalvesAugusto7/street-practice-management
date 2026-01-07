@@ -13,15 +13,15 @@ def create_user():
            data.get('login') or not
            data.get('email') or not
            data.get('password') or not
-           data.get('accessLevel')):
+           data.get('access_level')):
         return jsonify({'error': 'Dados não preenchidos corretametne'}), 400
 
-    user = User(publicId=str(uuid.uuid4()),
+    user = User(public_id=str(uuid.uuid4()),
                 name=data['name'], 
                 cpf=data['cpf'],
                 login=data['login'],
                 email=data['email'],
-                accessLevel=data['password'])
+                access_level=data['password'])
 
     user.set_password(data['password'])
     db.session.add(user)

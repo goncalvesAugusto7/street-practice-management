@@ -1,6 +1,8 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { useState, useEffect } from "react";
 
+import Loading from "../../components/LoadingIcon"
+
 export default function ServiceMap() {
   const [loading, setLoading] = useState(true);
   const [centroid, setCentroid] = useState(null);
@@ -9,15 +11,12 @@ export default function ServiceMap() {
   const getLocations = async (event) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetch("/api/routes");
+        const response = await fetch("http://localhost:8080/api/location");
         const data = await response.json();
         console.log(data);
 
-        // data.locations.map((r,index) => (
-        //     console.log(r.id + " " + '"'+r.latitude+','+r.longitude+'"')
-        // ))
-        setLocations(data.locations);
-        resolve(data.locations);
+        setLocations(data);
+        resolve(data);
       } catch (error) {
         console.error("Erro ao pegar localizações: " + error);
         reject(error);
@@ -53,7 +52,11 @@ export default function ServiceMap() {
       .catch((error) => console.log("Erro: " + error));
   }, []);
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) return(
+    <div className="flex items-center justify-center">
+      <Loading/>
+    </div>
+  );
   if (!locations) return <p>Nenhum local de atendimento encontrado</p>;
 
   return (
