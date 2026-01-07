@@ -46,9 +46,9 @@ export default function Login(props) {
             
             setLoading(false)
             
-            if (data.accessLevel == 0) {
+            if (data.access_level == 0) {
                 navigate(`/admin`)
-            } else if (data.accessLevel == 1) {
+            } else if (data.access_level == 1) {
                 navigate(`/agente`)
             } else {
                 return alert("Erro ao acessar")
