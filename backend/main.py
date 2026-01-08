@@ -15,7 +15,8 @@ if __name__ == '__main__':
         cpf="039.544.613-90",
         login="admin",
         email="augusto@email.com",
-        access_level=0
+        access_level=0,
+        profile_picture="none"
       )
       user.set_password("123")
       db.session.add(user)

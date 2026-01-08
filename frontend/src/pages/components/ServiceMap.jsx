@@ -12,14 +12,12 @@ export default function ServiceMap() {
   const getLocations = async (event) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await api.get("/api/location/");
+        const response = await api.get("/api/locations/");
         const data = response.data;
-        console.log(data);
 
         setLocations(data);
         resolve(data);
       } catch (error) {
-        console.error("Erro ao pegar localizações: " + error);
         reject(error);
       }
     });
@@ -31,13 +29,9 @@ export default function ServiceMap() {
       locations.map((r, index) => (midLatitude += r.latitude));
       midLatitude /= locations.length;
 
-      console.log("latitude média: " + midLatitude);
-
       let midLongitude = 0;
       locations.map((r, index) => (midLongitude += r.longitude));
       midLongitude /= locations.length;
-
-      console.log("longitude média: " + midLongitude);
 
       setCentroid([midLatitude, midLongitude]);
     } catch (error) {

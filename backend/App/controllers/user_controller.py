@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from App.extensions import db
 from App.models import User
+from App.services import profileImageService
+from App.services import userService
 
 user_bp = Blueprint('user', __name__, url_prefix='/api/users')
 
@@ -34,3 +36,20 @@ def get_json():
     users = User.query.all()
 
     return jsonify([user.to_dict() for user in users])
+
+@user_bp.route("/<public_id>/profile-picture", methods=['POST'])
+def upload_pfp(public_id):
+
+    filename = request.files.get("file")
+    if not file:
+        return {"error": "Arquivo ausente"}, 400
+
+    filename = profileImageService.save(
+        public_id=public_id,
+        file=file
+    )
+
+    userService.serPfp(public_id, filename)
+
+    return {"message": "Imagem atualizada"}, 200
+

@@ -3,7 +3,7 @@ from App.extensions import db
 from App.models import Location
 from geoalchemy2.elements import WKTElement
 
-location_bp = Blueprint('location', __name__, url_prefix='/api/location')
+location_bp = Blueprint('location', __name__, url_prefix='/api/locations')
 
 @location_bp.route('/',methods=['POST'])
 def create_location():
