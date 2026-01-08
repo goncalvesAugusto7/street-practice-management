@@ -4,7 +4,7 @@ import jwt
 from App.models import User
 from App.config import SECRET_KEY
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
