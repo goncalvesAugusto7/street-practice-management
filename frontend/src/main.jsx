@@ -27,7 +27,7 @@ const router = createBrowserRouter([
       element: <Report />
   },
   {
-      path: "/admin/profile",
+      path: "/admin/profile/:public_id",
       element: <Profile />
   },
 ])

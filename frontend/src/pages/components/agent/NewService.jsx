@@ -107,7 +107,7 @@ export default function NewService() {
                 className="space-y-4 p-6 bg-white rounded-md shadow flex flex-col"
             >
                 <h2 
-                    className="text-2xl font-bold text-center mb-2">
+                    className="text-2xl font-bold text-slate-800 text-center mb-2">
                     Novo Atendimento
                 </h2>
         

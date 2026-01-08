@@ -37,6 +37,15 @@ def get_json():
 
     return jsonify([user.to_dict() for user in users])
 
+@user_bp.route('/<public_id>',methods=['GET'])
+def get_user(public_id):
+    user = User.query.filter_by(public_id=public_id).first()
+
+    if not user:
+        return jsonify({'message': 'Usuário não encontrado'}), 401
+    
+    return jsonify(user.to_dict()), 200
+
 @user_bp.route("/<public_id>/profile-picture", methods=['POST'])
 def upload_pfp(public_id):
 

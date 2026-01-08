@@ -4,7 +4,7 @@ import { ChevronRight } from 'lucide-react';
 
 export default function Card(props) {
     return (
-        <Link href='#' className='no-underline mb-2 w-full flex'>
+        <Link to={`/admin/profile/${props.public_id}`} className='no-underline mb-2 w-full flex'>
             <div className='flex w-full items-center md:justify-between bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl cursor-pointer p-4 transition-all shadow-sm'>
                 
                 <img src={medico} alt="ícone de médico" className='w-12 h-12 md:h-8 md:w-8 mr-4 flex-shrink-0 self-start md:self-center'/>
