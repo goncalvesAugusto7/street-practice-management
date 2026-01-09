@@ -9,6 +9,7 @@ export default function AddUser() {
     const { register, handleSubmit, formState: { errors }, watch } = useForm()
     const watchPassword = watch("password")
     const [showConfirm,setShowConfirm] = useState(false)
+    const navigate = useNavigate();
 
     const onSubmit = async (data) => {
         try {
@@ -26,16 +27,18 @@ export default function AddUser() {
             
 
             console.log("Usuário criado!")
+            alert("Usuário criado com sucesso!")
+            navigate(-1)
         } catch(error) {
             if (error.response) {
                 console.error("Erro da API:", error.response.data.error);
+                alert(error.response.data.error+"\nCadastro não realizado")
             } else {
                 console.error("Erro inesperado:", error.message);
             }
         }
     }
 
-    const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-blue-400 pt-10 pb-10 px-4">
@@ -139,6 +142,7 @@ export default function AddUser() {
                                 </label>
                                 <input
                                     type="text"
+                                    maxLength="11"
                                     placeholder="CPF do usuário..."
                                     {...register("cpf", { 
                                         required: true,
@@ -216,9 +220,7 @@ export default function AddUser() {
                             <input
                                 type="file"
                                 accept="image/*"
-                                {...register("photo", {
-                                required: "A foto é obrigatória",
-                                })}
+                                {...register("photo")}
                                 className="block w-full text-sm text-slate-600
                                 file:mr-4 file:py-2 file:px-4
                                 file:rounded-lg file:border-0

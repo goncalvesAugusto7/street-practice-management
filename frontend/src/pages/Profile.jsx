@@ -8,12 +8,29 @@ import { deleteUser } from '../services/userService'
 export default function Profile() {
     const { public_id } = useParams();
     const [showConfirm,setShowConfirm] = useState(false)
+    //const [formatedCPF,setFormatedCPF] = useState('')
     const navigate = useNavigate();
     const [user,setUser] = useState({});
 
     const handleDelete = () => {
         setShowConfirm(!showConfirm)
     }
+
+    const formatedCPF = (cpf) => {
+        if(!cpf) return '';
+
+        const digits = cpf.replace(/\D/g, '');
+
+        if (digits.length !== 11) {
+            throw new Error('CPF deve ter 11 dígitos')
+        }
+
+        return digits.replace(
+            /(\d{3})(\d{3})(\d{3})(\d{2})/,
+            '$1.$2.$3-$4'
+        )
+    }
+
     const deleteCurrentUser = async () =>{
         try{
             await deleteUser(public_id)
@@ -42,6 +59,7 @@ export default function Profile() {
             .then((response) => {
                 console.log(response);
                 setUser(response.data)
+                //setFormatedCPF()
             })
             .catch((e) => console.error("Catched error: "+e))
         }
@@ -102,7 +120,7 @@ export default function Profile() {
                             <InfoField label="Nome" value={user.name} fullWidth/>
                             <InfoField label="E-mail" value={user.email}/>
                             <InfoField label="Login" value={user.login}/>
-                            <InfoField label="CPF" value={user.cpf}/>
+                            <InfoField label="CPF" value={formatedCPF(user.cpf)}/>
                             <InfoField label="Nível de Acesso" value={user.access_level} isBadge/>
                             
                         </div>
