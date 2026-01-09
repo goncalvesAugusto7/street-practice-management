@@ -5,6 +5,7 @@ import { PlusIcon } from "lucide-react";
 import Input from "../../../components/Input";
 import Card from "../../../components/Card";
 import api from "../../../services/api";
+import { Link } from "react-router-dom";
 
 export default function ManageUsers() {
   const [loading, setLoading] = useState(false);
@@ -16,14 +17,16 @@ export default function ManageUsers() {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await api
-          .get("/users")
+          .get("/users/")
           .then((response) => {
             console.log(response);
             setUsers(response.data);
+            resolve(data);
           })
           .catch((e) => console.error(e));
       } catch (error) {
         console.error("Catched error: " + error);
+        reject(error);
       }
     });
   };
@@ -120,10 +123,12 @@ export default function ManageUsers() {
         )}
       </div>
       <div className="items-center flex flex-col">
-        <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg mb-4 transition-colors shadow-sm active:scale-95">
-          <PlusIcon size={24} />
-          Adicionar
-        </button>
+        <Link to={'/admin/profile/add'}>
+          <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg mb-4 transition-colors shadow-sm active:scale-95">
+            <PlusIcon size={24} />
+            Adicionar
+          </button>
+        </Link>
       </div>
     </div>
   );

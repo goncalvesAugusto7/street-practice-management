@@ -12,7 +12,7 @@ export default function Profile() {
 
     useEffect(() => {
         const data = async() => {
-            await api.get(`/api/users/${public_id}`)
+            await api.get(`/users/${public_id}`)
             .then((response) => {
                 console.log(response);
                 setUser(response.data)

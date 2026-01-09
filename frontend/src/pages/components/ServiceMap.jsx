@@ -12,7 +12,7 @@ export default function ServiceMap() {
   const getLocations = async (event) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await api.get("/api/locations/");
+        const response = await api.get("/locations/");
         const data = response.data;
 
         setLocations(data);

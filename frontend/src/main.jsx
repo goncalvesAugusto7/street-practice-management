@@ -7,6 +7,7 @@ import AgentDashboard from './pages/AgentDashboard.jsx'
 import ManagerDashboard from './pages/ManagerDashboard.jsx'
 import Report from './pages/Report.jsx'
 import Profile from './pages/Profile.jsx'
+import AddUser from './pages/AddUser.jsx'
 import "leaflet/dist/leaflet.css";
 
 const router = createBrowserRouter([
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
   {
       path: "/admin/profile/:public_id",
       element: <Profile />
+  },
+  {
+      path: "/admin/profile/add",
+      element: <AddUser />
   },
 ])
 

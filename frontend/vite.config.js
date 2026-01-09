@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     viteMockServe({
       mockPath: "api",
-      localEnabled: false,
+      localEnabled: true,
     }),
   ],
   server: {
