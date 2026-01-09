@@ -50,3 +50,22 @@ class Location(db.Model):
             "latitude": point.y,
             "longitude": point.x
         }
+
+class Resident(db.Model):
+    __tablename__ = 'residents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    public_id = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    date_of_birth = db.Column(db.Date, nullable=False)
+    sex = db.Column(db.String(1), nullable=False)
+    initial_clinical_history = db.Column(db.String(500))
+
+    def to_dict(self):
+        return {
+            "public_id": self.public_id,
+            "name": self.name,
+            "date_of_birth": self.date_of_birth,
+            "sex": self.sex,
+            "initial_clinical_history": self.initial_clinical_history
+        }

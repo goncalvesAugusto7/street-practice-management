@@ -1,107 +1,109 @@
-import { useState } from "react"
-import Input from "../../../components/Input"
+import { useForm } from "react-hook-form";
+import Input from "../../../components/Input";
 import Button from "../../../components/Button";
-import moment from "moment";
+import { createResident } from "../../../services/residentService";
 
 export default function RegisterResident() {
-    const [loading,setLoading] = useState(true)
-    const [name,setName] = useState("");
-    const [dayOfBirth,setDayOfBirth] = useState("");
-    const [sex,setSex] = useState("");
-    const [initialClinicalHistory,setinitialClinicalHistory] = useState("");
-    const [data,setData] = useState({
-        name: "",
-        dayOfBirth: "",
-        sex: "",
-        initialClinicalHistory: ""
-    })
-    
-    const createDataObject = (event)=>{
-        event.preventDefault();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting }
+    } = useForm();
 
-        const dataObj = {
-            name: name,
-            dayOfBirth: dayOfBirth,
-            sex: sex,
-            initialClinicalHistory: initialClinicalHistory
-        }
-        setData()
+    const onSubmit = async (data) => {
+        // Adaptando os nomes para o formato da API
+        const payload = {
+            name: data.name,
+            date_of_birth: data.dayOfBirth,
+            sex: data.sex,
+            initial_clinical_history: data.initialClinicalHistory
+        };
 
-        return dataObj
-    }
-
-    const checkData = (data) => {
-        const ok = Object.values(data).every(value => value.trim() !== "");
-
-        if (!ok) {
-            alert("Preencha todos os campos");
-            return false;
+        try {
+            await createResident(payload);
+            alert("Morador criado com sucesso!");
+            window.location.reload();
+        } catch (error) {
+            if (error.response) {
+                alert("Cadastro não realizado.");
+                console.error(error.response.data.error);
+            } else {
+                console.error("Erro inesperado:", error.message);
             }
-
-            alert("Cadastro feito com sucesso!");
-            return true;
+        }
     };
 
-    
     return (
         <div>
-            <form 
+            <form
+                onSubmit={handleSubmit(onSubmit)}
                 className="space-y-4 p-6 bg-white rounded-md shadow flex flex-col"
             >
-                <h2 
-                    className="text-2xl font-bold text-slate-800 text-center mb-2">
+                <h2 className="text-2xl font-bold text-slate-800 text-center mb-2">
                     Cadastro de novo morador
                 </h2>
 
                 <p className="justify-center flex">Nome completo</p>
-                <Input 
-                    type="text" 
+                <Input
+                    type="text"
                     placeholder="Digite o nome do morador"
-                    value={name}
-                    onChange={(e)=>setName(e.target.value)}
+                    {...register("name", { required: "Nome é obrigatório" })}
                 />
+                {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+
                 <p className="justify-center flex">Data de nascimento</p>
                 <Input
                     type="date"
-                    placeholder="Data de nascimento"
-                    value={dayOfBirth}
-                    onChange={(e)=>{setDayOfBirth(e.target.value)}}
+                    max={new Date().toISOString().split("T")[0]}
+                    {...register("dayOfBirth", {
+                        required: "Data de nascimento é obrigatória",
+                        validate: (value) => {
+                            const selectedDate = new Date(value);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+
+                            return (
+                                selectedDate <= today ||
+                                "A data de nascimento não pode ser futura"
+                            );
+                        }
+                    })}
                 />
+                {errors.dayOfBirth && (
+                    <span className="text-red-500">{errors.dayOfBirth.message}</span>
+                )}
+
                 <p className="justify-center flex">Sexo</p>
                 <label>
-                <Input
-                    type="radio"
-                    name="sexo"
-                    value="masculino"
-                    checked={sex === "masculino"}
-                    onChange={(e) => setSex(e.target.value)}
-                />
-                Masculino
+                    <Input
+                        type="radio"
+                        value="M"
+                        {...register("sex", { required: "Sexo é obrigatório" })}
+                    />
+                    Masculino
                 </label>
 
                 <label>
-                <Input
-                    type="radio"
-                    name="sexo"
-                    value="feminino"
-                    checked={sex === "feminino"}
-                    onChange={(e) => setSex(e.target.value)}
-                />
-                Feminino
+                    <Input
+                        type="radio"
+                        value="F"
+                        {...register("sex", { required: "Sexo é obrigatório" })}
+                    />
+                    Feminino
                 </label>
+                {errors.sex && <span className="text-red-500">{errors.sex.message}</span>}
+
                 <p className="justify-center flex">Histórico clínico inicial</p>
                 <textarea
-                    value={initialClinicalHistory}
-                    onChange={(e)=> setinitialClinicalHistory(e.target.value)}
                     rows={4}
                     className="bg-slate-200 shadow border border-slate-300 rounded-md"
+                    {...register("initialClinicalHistory")}
                 />
-                
-                <Button onClick={(e)=>{
-                    const dataObj = createDataObject(e);
-                    checkData(dataObj);
-                }}>Cadastrar</Button>
+
+                <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+                </Button>
             </form>
         </div>
-    )
+    );
 }

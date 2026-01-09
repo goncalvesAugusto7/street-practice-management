@@ -12,7 +12,7 @@ if __name__ == '__main__':
       user = User(
         public_id=str(uuid.uuid4()),
         name="Augusto Gonçalves Santos",
-        cpf="039.544.613-90",
+        cpf="03954461390",
         login="admin",
         email="augusto@email.com",
         access_level=0,
