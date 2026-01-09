@@ -30,7 +30,8 @@ class User(db.Model):
             "cpf": self.cpf,
             "login": self.login,
             "email": self.email,
-            "access_level": self.access_level
+            "access_level": self.access_level,
+            "profile_picture": self.profile_picture
         }
 
 class Location(db.Model):

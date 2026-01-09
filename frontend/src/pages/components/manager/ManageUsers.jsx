@@ -1,11 +1,11 @@
 import Title from "../../../components/Title";
 import { useState, useEffect } from "react";
 import { PlusIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import Input from "../../../components/Input";
 import Card from "../../../components/Card";
 import api from "../../../services/api";
-import { Link } from "react-router-dom";
 
 export default function ManageUsers() {
   const [loading, setLoading] = useState(false);
@@ -113,6 +113,7 @@ export default function ManageUsers() {
                 login={user.login}
                 email={user.email}
                 public_id={user.public_id}
+                profile_picture={user.profile_picture}
               />
             </div>
           ))

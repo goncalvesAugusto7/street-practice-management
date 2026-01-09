@@ -2,13 +2,39 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import medico from '../assets/medico.svg'
 import api from '../services/api';
-import { ArrowLeftCircle } from 'lucide-react';
+import { ArrowLeftCircle, Trash2 } from 'lucide-react';
+import { deleteUser } from '../services/userService'
 
 export default function Profile() {
     const { public_id } = useParams();
+    const [showConfirm,setShowConfirm] = useState(false)
     const navigate = useNavigate();
+    const [user,setUser] = useState({});
 
-    const [user,setUser] = useState('');
+    const handleDelete = () => {
+        setShowConfirm(!showConfirm)
+    }
+    const deleteCurrentUser = async () =>{
+        try{
+            await deleteUser(public_id)
+            console.log("Usuário excluído");
+            alert("Usuário excluído")
+            navigate(-1)
+        } catch(error) {
+            if (error.response) {
+                console.error("API: ",error.response.data.error);
+            } else {
+                console.error("Erro inesperado: ",error.message);
+                
+            }
+        }
+    }
+
+    const hasProfilePicture =
+        user.profile_picture &&
+        user.profile_picture !== "None" &&
+        user.profile_picture !== "none";
+
 
     useEffect(() => {
         const data = async() => {
@@ -54,8 +80,14 @@ export default function Profile() {
                 </button>
 
                 <div className='flex flex-col items-center mb-8'>
-                    <div className='bg-white p-3 rounded-full shadow-lg mb-3'>
-                        <img src={medico} alt="foto do usuário" className='w-16 h-16 object-contain'/>
+                    <div className='bg-white p-1 rounded-full shadow-lg mb-3 overflow-hidden'>
+                        <img src={
+                                hasProfilePicture
+                                ? `/api/users/${user.public_id}/profile-picture/`
+                                : medico
+                            } 
+                            alt="foto do usuário" 
+                            className='w-24 h-24 rounded-full object-cover'/>
                     </div>
                     <h1 className='text-2xl font-bold text-white uppercase tracking-wider'>
                         Perfil do Usuário
@@ -75,7 +107,57 @@ export default function Profile() {
                             
                         </div>
                     </div>
+
+                    <div className='px-6 pb-6 flex justify-center'>
+                        <button
+                        onClick={handleDelete}
+                        className="
+                            inline-flex items-center justify-center
+                            gap-2 px-4 py-2
+                            rounded-xl
+                            border border-red-300
+                            text-red-600 font-semibold
+                            uppercase tracking-wide text-sm
+                            hover:bg-red-50 hover:border-red-400
+                            focus:outline-none focus:ring-2 focus:ring-red-400
+                            transition-colors
+                        "
+                        >
+                            <Trash2 size={16} />
+                            Excluir Usuário
+                    </button>
+                    </div>
+
                 </div>
+
+                {showConfirm && (
+                    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+                        <h2 className="text-lg font-bold text-slate-800 mb-2">
+                            Confirmar exclusão
+                        </h2>
+                        <p className="text-sm text-slate-600 mb-6">
+                            Essa ação não poderá ser desfeita.
+                        </p>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                            onClick={() => setShowConfirm(false)}
+                            className="px-4 py-2 rounded-lg border border-slate-300 text-slate-600"
+                            >
+                            Cancelar
+                            </button>
+                            <button
+                            onClick={deleteCurrentUser}
+                            className="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600"
+                            >
+                            Excluir
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                    )}
+
             </div>
         </div>
     )

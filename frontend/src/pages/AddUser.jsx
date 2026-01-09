@@ -1,14 +1,38 @@
 import { useForm } from 'react-hook-form' 
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeftCircle } from 'lucide-react'
+import { createUser, uploadProfilePicture } from '../services/userService'
 import  validator from 'validator'
+import { useState } from 'react'
 
 export default function AddUser() {
     const { register, handleSubmit, formState: { errors }, watch } = useForm()
     const watchPassword = watch("password")
+    const [showConfirm,setShowConfirm] = useState(false)
 
-    const onSubmit = (data) => {
-        console.log(data)
+    const onSubmit = async (data) => {
+        try {
+            const response = await createUser(data)
+            
+            const publicId = response.data.public_id
+            
+            if (data.photo?.length > 0) {
+                const formData = new FormData()
+                formData.append('file', data.photo[0])
+                
+                await uploadProfilePicture(publicId, formData)
+                console.log("Imagem subida!")
+            }else console.log("Usuário não subiu imagem");
+            
+
+            console.log("Usuário criado!")
+        } catch(error) {
+            if (error.response) {
+                console.error("Erro da API:", error.response.data.error);
+            } else {
+                console.error("Erro inesperado:", error.message);
+            }
+        }
     }
 
     const navigate = useNavigate();
@@ -183,6 +207,35 @@ export default function AddUser() {
 
                         </div>
 
+                        {/* Foto de perfil */}
+                        <div className="md:col-span-2">
+                            <label className="block text-xs font-bold text-blue-500 uppercase tracking-tight mb-1">
+                                Foto do Usuário
+                            </label>
+
+                            <input
+                                type="file"
+                                accept="image/*"
+                                {...register("photo", {
+                                required: "A foto é obrigatória",
+                                })}
+                                className="block w-full text-sm text-slate-600
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-lg file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-100 file:text-blue-700
+                                hover:file:bg-blue-200
+                                cursor-pointer"
+                            />
+
+                            {errors.photo && (
+                                <p className="text-xs text-red-500 mt-1">
+                                {errors.photo.message}
+                                </p>
+                            )}
+                        </div>
+
+
                         {/* Access level */}
                         <div className="flex items-center gap-2 mt-4">
                             <input
@@ -195,19 +248,49 @@ export default function AddUser() {
                             </label>
                         </div>
 
-                        {/* Botão */}
                         <div className="pt-4">
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={() => setShowConfirm(true)}
                                 className="w-full bg-green-500 hover:bg-green-600 text-white/90 hover:text-white font-bold uppercase tracking-wide py-3 rounded-xl transition-colors"
                             >
                                 Adicionar
                             </button>
                         </div>
 
+                        {showConfirm && (
+                            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                                <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+                                <h2 className="text-lg font-bold text-slate-800 mb-2">Confirmar ação</h2>
+                                <p className="text-sm text-slate-600 mb-6">
+                                    Tem certeza que deseja adicionar este usuário?
+                                </p>
+
+                                <div className="flex justify-end gap-3">
+                                    <button
+                                    onClick={() => setShowConfirm(false)}
+                                    className="px-4 py-2 rounded-lg border border-slate-300 text-slate-600"
+                                    >
+                                    Cancelar
+                                    </button>
+                                    <button
+                                    onClick={() => {
+                                        handleSubmit(onSubmit)()
+                                        setShowConfirm(false)
+                                    }}
+                                    className="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600"
+                                    >
+                                    Confirmar
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                        )}
+
+
                     </form>
                 </div>
             </div>
         </div>
     )
-}
+    }

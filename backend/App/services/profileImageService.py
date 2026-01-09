@@ -1,19 +1,23 @@
 import os
+import uuid
+from flask import current_app
 from werkzeug.utils import secure_filename
 
-UPLOAD_DIR = "/app/uploads/profiles"
 ALLOWED_EXTENSIONS = {"png","jpg","jpeg"}
 
 def save(public_id: str, file):
     _validate_file(file)
 
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    uploadDir = current_app.config["UPLOAD_PROFILE_PICTURES"]
+    os.makedirs(uploadDir, exist_ok=True)
 
     filename = secure_filename(f"user_{public_id}.png")
-    path = os.path.join(UPLOAD_DIR, filename)
+    uniqueName = f"{uuid.uuid4()}_{filename}"
+
+    path = os.path.join(uploadDir, uniqueName)
 
     file.save(path)
-    return file
+    return uniqueName
 
 def _validate_file(file):
     
