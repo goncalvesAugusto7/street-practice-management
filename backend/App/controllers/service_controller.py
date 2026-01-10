@@ -28,6 +28,7 @@ def create_service():
     service = Service(
         public_id=str(uuid.uuid4()),
         date=serviceDate,
+        observations=data.get('observations') or None,
         health_worker_id=data['health_worker_id'],
         resident_id=data['resident_id'],
         location_id=data['location_id'],

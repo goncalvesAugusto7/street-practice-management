@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from App.extensions import db
 from App.models import Location
 from geoalchemy2.elements import WKTElement
+import uuid
 
 location_bp = Blueprint('location', __name__, url_prefix='/api/locations')
 

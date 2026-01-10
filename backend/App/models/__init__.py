@@ -98,6 +98,7 @@ class Service(db.Model):
     public_id = db.Column(db.String(50), unique=True, nullable=False)
 
     date = db.Column(db.DateTime, nullable=False)
+    observations = db.Column(db.String(255))
 
     health_worker_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     resident_id = db.Column(db.Integer, db.ForeignKey('residents.id'), nullable=False)
@@ -113,6 +114,7 @@ class Service(db.Model):
         return {
             "public_id": self.public_id,
             "date": self.date.isoformat(),
+            "observations": self.observations,
             "health_worker_id": self.health_worker_id,
             "resident_id": self.resident_id,
             "location_id": self.location_id,

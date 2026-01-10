@@ -1,182 +1,209 @@
-import { useState } from "react"
-import { Globe, Check } from "lucide-react"
-import Input from "../../../components/Input"
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Globe, Check } from "lucide-react";
+import Input from "../../../components/Input";
 import Button from "../../../components/Button";
+import api from "../../../services/api";
 
 export default function NewService() {
-    const [residents,setResidents] = useState([]);
-    const [selectedResident,setSelectedResident] = useState("");
-    const [date,setDate] = useState("");
-    const [hour,setHour] = useState("");
-    const [location,setLocation] = useState("");
-    const [locationOutput, setLocationOutput] = useState("")
-    const [service,setService] = useState([])
-    const [selectedService,setSelectedService] = useState("");
-    const [observations,setObservations] = useState("")
-    const [data,setData] = useState(
-        {
-            resident: "",
-            date: "",
-            hour: "",
-            location: "",
-            service: "",
-            observations: "",
-        }
-    )
+    const [residents, setResidents] = useState([]);
+    const [services, setServices] = useState([]);
+    const [locationSaved, setLocationSaved] = useState(false);
 
-    const createDataObject = (event) => {
-        event.preventDefault()
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        setError,
+        clearErrors,
+        formState: { errors, isSubmitting }
+    } = useForm();
 
-        const dataObj = {
-            resident: selectedResident,
-            date: date,
-            hour: hour,
-            location: location,
-            service: service,
-            observations: observations,
-        }    
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [residentsRes, servicesRes] = await Promise.all([
+                    api.get("/residents/"),
+                    api.get("/types_service/")
+                ]);
+                setResidents(residentsRes.data);
+                setServices(servicesRes.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
 
-        setData(dataObj)
-        return dataObj
-        // const ok = Object.values(data).every(value => value !== "");
-        // if (!ok) return alert("Preencha todos os dados")
-        
-        // return alert("Cadastro feito com sucesso!")
-    }
-    const checkData = (data) => {
-        const ok = Object.values(data).every(value => value !== "");
-        if (!ok) return alert("Preencha todos os dados")
-        
-        return alert("Cadastro feito com sucesso!")
+        fetchData();
+    }, []);
 
-    }
+    const getLocation = (event) => {
+        event.preventDefault();
 
-
-    const getResidents = async (event) => {
-        event.preventDefault()
-        try {
-            const response = await fetch("/api/routes");
-            const data = await response.json();
-
-            setResidents(data.residents);
-            
-            console.log("PEGOU OS RESIDENTES: " + data.residents)
-        } catch(error) {
-            console.log("Erro ao buscar moradores: "+error)
-        }
-    }
-
-    const getLocation = (event)=>{
-        event.preventDefault()
         if (!navigator.geolocation) {
-            alert("Não foi possível pegar sua geolocalização")
-            return
+            alert("Geolocalização não suportada");
+            return;
         }
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                setLocation({
+                setValue("location", {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude
                 });
+                setLocationSaved(true);
+                clearErrors("location");
             },
-            (error) => {
-                console.log(error);
-                alert("Error ao obter lcoalização");
+            () => {
+                alert("Erro ao obter localização");
             }
         );
-        setLocationOutput("Localização registrada com sucesso")
     };
 
-    const getService = async (event) => {
-        try {
-            event.preventDefault()
-
-            const response = await fetch("/api/routes")
-            const data = await response.json()
-
-            setService(data.services)
-        } catch (error) {
-            console.log("Erro ao pegar serviços: " + error)
+    const onSubmit = async (data) => {
+        if (!data.location) {
+            setError("location", {
+                type: "manual",
+                message: "Localização é obrigatória"
+            });
+            return;
         }
-    }
+
+        try {
+            const locationRes = await api.post("/locations/", {
+                latitude: data.location.latitude,
+                longitude: data.location.longitude
+            });
+
+            const locationId = locationRes.data.id;
+
+            const dateTimeISO = new Date(
+                `${data.date}T${data.hour}`
+            ).toISOString();
+
+            const payload = {
+                date: dateTimeISO,
+                observations: data.observations,
+                health_worker_id: "332ef6b2-1523-4f77-b06d-80fa9a68f1d9",
+                resident_id: Number(data.resident),
+                location_id: locationId,
+                type_service_id: Number(data.service)
+            };
+
+            await api.post("/services/", payload);
+
+            alert("Atendimento registrado com sucesso!");
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao registrar atendimento");
+        }
+    };
+
+    const today = new Date().toISOString().split("T")[0];
 
     return (
         <div>
-            <form 
+            <form
+                onSubmit={handleSubmit(onSubmit)}
                 className="space-y-4 p-6 bg-white rounded-md shadow flex flex-col"
             >
-                <h2 
-                    className="text-2xl font-bold text-slate-800 text-center mb-2">
+                <h2 className="text-2xl font-bold text-slate-800 text-center mb-2">
                     Novo Atendimento
                 </h2>
-        
+
                 <p className="justify-center flex">Morador</p>
-                <select 
-                    onClick={getResidents}
-                    value={selectedResident} 
-                    onChange={(e)=> setSelectedResident(e.target.value)}
+                <select
                     className="border p-2 rounded"
+                    {...register("resident", {
+                        required: "Selecione um morador"
+                    })}
                 >
                     <option value="">Selecione um morador</option>
-                    
-                    {Array.isArray(residents) && residents.map((r,index) =>(
-                        <option key={index} value={r.name}>
+                    {residents.map((r) => (
+                        <option key={r.id} value={r.id}>
                             {r.name}
                         </option>
                     ))}
-
                 </select>
+                {errors.resident && (
+                    <span className="text-red-500">{errors.resident.message}</span>
+                )}
 
                 <p className="justify-center flex">Data do atendimento</p>
-                <Input type="date" value={date} onChange={(e)=>setDate(e.target.value)}/>
+                <Input
+                    type="date"
+                    max={today}
+                    {...register("date", {
+                        required: "Data é obrigatória",
+                        validate: (value) => {
+                            const selected = new Date(value);
+                            const todayDate = new Date();
+                            todayDate.setHours(0, 0, 0, 0);
+
+                            return (
+                                selected <= todayDate ||
+                                "A data não pode ser futura"
+                            );
+                        }
+                    })}
+                />
+                {errors.date && (
+                    <span className="text-red-500">{errors.date.message}</span>
+                )}
 
                 <p className="justify-center flex">Horário do atendimento</p>
-                <Input type="time" value={hour} onChange={(e)=>setHour(e.target.value)}/>
+                <Input
+                    type="time"
+                    {...register("hour", {
+                        required: "Horário é obrigatório"
+                    })}
+                />
+                {errors.hour && (
+                    <span className="text-red-500">{errors.hour.message}</span>
+                )}
 
-                <Button
-                    onClick={getLocation}
-                >
-                    <Globe size={24}/>Registrar localização <br />
+                <Button type="button" onClick={getLocation}>
+                    <Globe size={20} /> Registrar localização
                 </Button>
-                {locationOutput && (
-                    <p 
-                    className="text-green-600 font-semibold mt-2 justify-center flex">
-                        <Check size={23}/>{locationOutput}
+
+                {locationSaved && (
+                    <p className="text-green-600 font-semibold flex items-center gap-2 justify-center">
+                        <Check size={20} /> Localização registrada
                     </p>
                 )}
+                {errors.location && (
+                    <span className="text-red-500">{errors.location.message}</span>
+                )}
+
                 <p className="justify-center flex">Atendimento prestado</p>
                 <select
-                    onClick={getService}
-                    value={selectedService}
-                    onChange={(e)=>setSelectedService(e.target.value)}
                     className="border p-2 rounded"
+                    {...register("service", {
+                        required: "Selecione o tipo de serviço"
+                    })}
                 >
-                    <option value={""}>Selecione o tipo de serviço prestado</option>
-
-                    {Array.isArray(service) && service.map((r,index) => (
-                        <option key={index} value={r.type}>
-                            {r.type}
+                    <option value="">Selecione o tipo de serviço</option>
+                    {services.map((s) => (
+                        <option key={s.public_id} value={s.public_id}>
+                            {s.description}
                         </option>
                     ))}
-
                 </select>
+                {errors.service && (
+                    <span className="text-red-500">{errors.service.message}</span>
+                )}
 
-                <textarea 
-                    value={observations}
-                    onChange={(e)=> setObservations(e.target.value)}
+                <p className="justify-center flex">Observações</p>
+                <textarea
                     rows={5}
-                    className="bg-slate-200 shadow border border-slate-300 rounded-md"
-                >
-                </textarea>
-                                
-                <Button onClick={(e)=>{
-                    const dataObj = createDataObject(e);
-                    checkData(dataObj);
-                }}>Registrar</Button>
-            </form>
-            
+                    className="bg-slate-200 shadow border border-slate-300 rounded-md p-2"
+                    {...register("observations")}
+                />
 
+
+                <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Registrando..." : "Registrar"}
+                </Button>
+            </form>
         </div>
-    )
+    );
 }
