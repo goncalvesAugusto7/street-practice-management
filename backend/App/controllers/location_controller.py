@@ -19,6 +19,8 @@ def create_location():
     db.session.add(location)
     db.session.commit()
 
+    return jsonify(location.to_dict()), 201
+
 @location_bp.route('/',methods=['GET'])
 def get_json():
     locations = Location.query.all()

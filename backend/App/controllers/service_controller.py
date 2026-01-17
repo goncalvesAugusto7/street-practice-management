@@ -1,9 +1,11 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import SQLAlchemyError
 from App.extensions import db
-from App.models import Service
+from App.models import Service, Resident, Location, User, Type_Service
+from geoalchemy2.elements import WKTElement
 import uuid
-import datetime
+from datetime import datetime
+import traceback
 
 service_bp = Blueprint('service', __name__, url_prefix='/api/services')
 
@@ -11,33 +13,58 @@ service_bp = Blueprint('service', __name__, url_prefix='/api/services')
 def create_service():
     data = request.get_json()
 
-    if (not data or not 
+    strData = str(data)
+
+    try:
+        if (not data or not data.get("latitude") or not data.get("longitude")):
+            return jsonify({'error': 'Localização não obtida corretamente'}), 400
+        
+        location = Location(
+            public_id = str(uuid.uuid4()),
+            position = WKTElement(
+                f"POINT({data['longitude']} {data['latitude']})",
+                srid = 4326
+            )
+        )
+        db.session.add(location)
+        db.session.flush()
+
+        if (not 
             data.get('date') or not 
             data.get('health_worker_id') or not 
             data.get('resident_id') or not 
-            data.get('location_id') or not 
             data.get('type_service_id')):
-
-        return jsonify({'error': 'Dados não preenchidos corretametne'}), 400
+            return jsonify({'error': "Dados não recebidos corretamente"}), 400
 
         try:
             serviceDate = datetime.fromisoformat(data['date'].replace('Z', '+00:00'))
         except ValueError:
             return jsonify({"error": "Formato de data inválido."}), 400
 
-    service = Service(
-        public_id=str(uuid.uuid4()),
-        date=serviceDate,
-        observations=data.get('observations') or None,
-        health_worker_id=data['health_worker_id'],
-        resident_id=data['resident_id'],
-        location_id=data['location_id'],
-        type_service_id=data['type_service_id']
-    )
-    db.session.add(service)
-    db.session.commit()
+        user_id         =   User.get_id_by_pucblic_id(data["health_worker_id"])
+        resident_id     =   Resident.get_id_by_pucblic_id(data["resident_id"])
+        type_service_id =   Type_Service.get_id_by_pucblic_id(data["type_service_id"])
 
-    return jsonify({service.to_dict()}), 201
+
+        service = Service(
+            public_id=str(uuid.uuid4()),
+            date=serviceDate,
+            observations=data.get('observations') or None,
+            health_worker_id=user_id,
+            resident_id=resident_id,
+            location_id=location.id,
+            type_service_id=type_service_id
+        )
+        db.session.add(service)
+        db.session.commit()
+
+        return jsonify(service.to_dict()), 201
+
+    except Exception as e:
+        tb = traceback.extract_tb(e.__traceback__)
+        filename, line_number, function_name, text = tb[-1]
+        db.session.rollback()
+        return jsonify(error=f"Falha ao salvar, erro na linha {line_number}: {e}"), 400
 
 @service_bp.route('/',methods=['GET'])
 def get_json():

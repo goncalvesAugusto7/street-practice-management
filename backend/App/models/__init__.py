@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
+from datetime import datetime
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -24,6 +25,10 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+    
+    def get_id_by_pucblic_id(public_id):
+        user = db.session.query(User.id).filter_by(public_id=public_id).first()
+        return user.id if user else None
 
     def to_dict(self):
         return {
@@ -46,7 +51,7 @@ class Location(db.Model):
         nullable=False
     )
 
-    services = db.relationship("Service", back_populates="location")
+    service = db.relationship("Service", back_populates="location", uselist=False)
 
     def to_dict(self):
         point = to_shape(self.position)
@@ -76,6 +81,10 @@ class Resident(db.Model):
             "initial_clinical_history": self.initial_clinical_history
         }
 
+    def get_id_by_pucblic_id(public_id):
+        resident = db.session.query(Resident.id).filter_by(public_id=public_id).first()
+        return resident.id if resident else None
+
 class Type_Service(db.Model):
     __tablename__ = "types_service"
 
@@ -84,6 +93,10 @@ class Type_Service(db.Model):
     description = db.Column(db.String(255), nullable=False)
 
     services = db.relationship("Service", back_populates="type_service")
+
+    def get_id_by_pucblic_id(public_id):
+        typeService = db.session.query(Type_Service.id).filter_by(public_id=public_id).first()
+        return typeService.id if typeService else None
 
     def to_dict(self):
         return {
@@ -99,15 +112,16 @@ class Service(db.Model):
 
     date = db.Column(db.DateTime, nullable=False)
     observations = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     health_worker_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     resident_id = db.Column(db.Integer, db.ForeignKey('residents.id'), nullable=False)
-    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey('locations.id'), unique=True, nullable=False)
     type_service_id = db.Column(db.Integer, db.ForeignKey('types_service.id'), nullable=False)
 
     health_worker = db.relationship("User", back_populates='services')
     resident = db.relationship("Resident", back_populates='services')
-    location = db.relationship("Location", back_populates='services')
+    location = db.relationship("Location", back_populates='service', uselist=False)
     type_service = db.relationship("Type_Service", back_populates='services')
 
     def to_dict(self):
@@ -123,4 +137,5 @@ class Service(db.Model):
             "resident": self.resident.to_dict() if self.resident else None,
             "location": self.location.to_dict() if self.location else None,
             "type_service": self.type_service.to_dict() if self.type_service else None,
+            "created_at" : self.created_at
         }

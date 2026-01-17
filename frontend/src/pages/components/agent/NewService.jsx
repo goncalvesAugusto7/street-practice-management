@@ -9,6 +9,7 @@ export default function NewService() {
     const [residents, setResidents] = useState([]);
     const [services, setServices] = useState([]);
     const [locationSaved, setLocationSaved] = useState(false);
+    const [userLocationFeedback, setUserLocationFeedback] = useState("");
 
     const {
         register,
@@ -52,6 +53,26 @@ export default function NewService() {
                 });
                 setLocationSaved(true);
                 clearErrors("location");
+                console.log("Localização obtida com sucesso: ", position.coords.latitude+","+position.coords.longitude)
+                setUserLocationFeedback("Localização registrada")
+            },
+            (error) => {
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        console.error("Usuário negou o acesso à geolocalização");
+                        setUserLocationFeedback("Permita o acesso à sua localização para continuar")
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        console.error("A localização não está disponível");
+                        setUserLocationFeedback("Verifique se a localização está disponível")
+                        break;
+                    case error.TIMEOUT:
+                        console.error("O tempo de espera foi muito longo");
+                        setUserLocationFeedback("O tempo de espera foi muito longo");
+                        break;
+                    default:
+                        console.error("Erro desconhecido: " + error.message)
+                }
             },
             () => {
                 alert("Erro ao obter localização");
@@ -69,13 +90,6 @@ export default function NewService() {
         }
 
         try {
-            const locationRes = await api.post("/locations/", {
-                latitude: data.location.latitude,
-                longitude: data.location.longitude
-            });
-
-            const locationId = locationRes.data.id;
-
             const dateTimeISO = new Date(
                 `${data.date}T${data.hour}`
             ).toISOString();
@@ -84,17 +98,27 @@ export default function NewService() {
                 date: dateTimeISO,
                 observations: data.observations,
                 health_worker_id: "332ef6b2-1523-4f77-b06d-80fa9a68f1d9",
-                resident_id: Number(data.resident),
-                location_id: locationId,
-                type_service_id: Number(data.service)
+                resident_id: data.resident,
+                type_service_id: data.service,
+                latitude: data.location.latitude,
+                longitude: data.location.longitude
+
             };
 
-            await api.post("/services/", payload);
+            try {
+                const response = await api.post("/services/", payload);
+                alert("Atendimento registrado com sucesso!");
+            } catch (error) {
+                if (error.response) {
+                    console.error(error.response.data.error);
+                    alert("Erro ao registrar atendimento");
+                }
+            }
 
-            alert("Atendimento registrado com sucesso!");
         } catch (error) {
-            console.error(error);
-            alert("Erro ao registrar atendimento");
+            if (error.locationRes)
+            console.error(error.locationRes.data.error);
+            alert("Erro ao registrar localização");
         }
     };
 
@@ -118,8 +142,11 @@ export default function NewService() {
                     })}
                 >
                     <option value="">Selecione um morador</option>
-                    {residents.map((r) => (
-                        <option key={r.id} value={r.id}>
+                    {residents
+                    .slice()
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((r) => (
+                        <option key={r.public_id} value={r.public_id}>
                             {r.name}
                         </option>
                     ))}
@@ -167,7 +194,12 @@ export default function NewService() {
 
                 {locationSaved && (
                     <p className="text-green-600 font-semibold flex items-center gap-2 justify-center">
-                        <Check size={20} /> Localização registrada
+                        <Check size={20} /> {userLocationFeedback}
+                    </p>
+                )}
+                {!locationSaved && (
+                    <p className="text-red-600 font-semibold flex items-center gap-2 justify-center">
+                        {userLocationFeedback}
                     </p>
                 )}
                 {errors.location && (
