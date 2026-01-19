@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Globe, Check } from "lucide-react";
 import Input from "../../../components/Input";
@@ -10,6 +10,8 @@ export default function NewService() {
     const [services, setServices] = useState([]);
     const [locationSaved, setLocationSaved] = useState(false);
     const [userLocationFeedback, setUserLocationFeedback] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [userPID, setUserPID] = useState("");
 
     const {
         register,
@@ -29,6 +31,14 @@ export default function NewService() {
                 ]);
                 setResidents(residentsRes.data);
                 setServices(servicesRes.data);
+
+                const response = await api.get(
+                    "/auth/me",
+                    { withCredentials:true }
+                );                
+                setUserPID(response.data.public_id)
+                console.log(userPID);
+                
             } catch (error) {
                 console.error(error);
             }
@@ -97,7 +107,7 @@ export default function NewService() {
             const payload = {
                 date: dateTimeISO,
                 observations: data.observations,
-                health_worker_id: "332ef6b2-1523-4f77-b06d-80fa9a68f1d9",
+                health_worker_id: userPID,
                 resident_id: data.resident,
                 type_service_id: data.service,
                 latitude: data.location.latitude,
