@@ -52,7 +52,7 @@ export default function ServiceMap() {
       <Loading/>
     </div>
   );
-  if (!locations) return <p>Nenhum local de atendimento encontrado</p>;
+  if (locations.length === 0) return <p className="text-2xl font-bold text-center mb-2">Nenhum atendimento foi cadastrado ainda.</p>;
 
   return (
     <div className="bg-green-100 rounded-md p-2 border-green-700 border-2">
