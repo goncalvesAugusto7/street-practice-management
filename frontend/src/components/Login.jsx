@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
+
 
 import Input from "./Input";
 import Loading from "./LoadingIcon";
 import api from "../services/api";
 
+
 export default function Login(props) {
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
 
   const [userLogin, setUserLogin] = useState("");
   const [userPassword, setPassword] = useState("");
@@ -34,15 +38,21 @@ export default function Login(props) {
           userPassword,
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          withCredentials: true
         }
       );
+      await refreshUser();
 
-      const { token, access_level } = response.data;
+      const meResponse = await api.get(
+        "/auth/me",
+        { withCredentials:true }
+      );
 
-      localStorage.setItem("token", token);
+      const { access_level } = meResponse.data;
+      console.log(meResponse.data);
+      console.log(access_level);
+      
+      
 
       setLoading(false);
 
@@ -51,11 +61,11 @@ export default function Login(props) {
       } else if (access_level == 1) {
         navigate(`/agente`);
       } else {
-        return alert("Erro ao acessar");
+        navigate("/")
       }
     } catch (error) {
       if (error.response) {
-        setError(error.response.data.message || "adfasf login");
+        setError(error.response.data.message || "Credenciais inválidas para login");
       } else {
         setError("Erro de conexão com o servidor");
       }

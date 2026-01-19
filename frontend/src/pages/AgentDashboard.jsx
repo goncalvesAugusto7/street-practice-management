@@ -3,6 +3,7 @@ import RegisterResident from "./components/agent/RegisterResident";
 import NewService from "./components/agent/NewService";
 import ServiceMap from "./components/ServiceMap";
 import Header from "../components/Header";
+import Logout from "../components/Logout";
 
 export default function AgentDashboard() {
   const [selected, setSelected] = useState(null);
@@ -12,11 +13,13 @@ export default function AgentDashboard() {
     newService: NewService,
     registerResident: RegisterResident,
     serviceMap: ServiceMap,
+    logout: Logout,
   };
   const componentsList = [
     { label: "Novo Atendimento", key: "newService" },
     { label: "Cadastrar Morador", key: "registerResident" },
     { label: "Consultar mapa de atendimentos", key: "serviceMap" },
+    { label: "Sair", key: "logout"}
   ];
   const SelectedComponent = componentsMap[selected];
 

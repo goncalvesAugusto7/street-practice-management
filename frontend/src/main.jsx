@@ -9,6 +9,9 @@ import Report from './pages/Report.jsx'
 import Profile from './pages/Profile.jsx'
 import AddUser from './pages/AddUser.jsx'
 import "leaflet/dist/leaflet.css";
+import { AuthProvider } from './context/AuthProvider.jsx'
+import { ProtectedRoute } from './context/ProtectedRoute.jsx'
+import Unauthorized from './pages/Unauthorized.jsx'
 
 const router = createBrowserRouter([
   {
@@ -16,29 +19,49 @@ const router = createBrowserRouter([
     element: <App/>
   },
   {
-    path: "/agente",
-    element: <AgentDashboard/>
+    path: "/unauthorized",
+    element: <Unauthorized/>
   },
+
+  // Rotas de agente
   {
-    path: "/admin",
-    element: <ManagerDashboard/>
+    element: <ProtectedRoute requiredLevel={1} />,
+    children: [
+      {
+        path: "/agente",
+        element: <AgentDashboard/>
+      }
+    ]
   },
+  
+  // Rotas de Admin
   {
-      path: "/admin/report",
-      element: <Report />
-  },
-  {
-      path: "/admin/profile/:public_id",
-      element: <Profile />
-  },
-  {
-      path: "/admin/profile/add",
-      element: <AddUser />
-  },
-])
+    element: <ProtectedRoute requiredLevel={0}/>,
+    children: [
+      {
+        path: "/admin",
+        element: <ManagerDashboard/>
+      },
+      {
+          path: "/admin/report",
+          element: <Report />
+      },
+      {
+          path: "/admin/profile/:public_id",
+          element: <Profile />
+      },
+      {
+          path: "/admin/profile/add",
+          element: <AddUser />
+      }
+    ]
+  }
+]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )

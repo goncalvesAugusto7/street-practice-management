@@ -8,7 +8,6 @@ import { deleteUser } from '../services/userService'
 export default function Profile() {
     const { public_id } = useParams();
     const [showConfirm,setShowConfirm] = useState(false)
-    //const [formatedCPF,setFormatedCPF] = useState('')
     const navigate = useNavigate();
     const [user,setUser] = useState({});
 

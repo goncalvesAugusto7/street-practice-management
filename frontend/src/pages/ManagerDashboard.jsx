@@ -3,24 +3,21 @@ import { useState } from "react";
 import ServiceMap from "./components/ServiceMap";
 import ManageUsers from "./components/manager/ManageUsers";
 import Header from "../components/Header";
+import Logout from "../components/Logout";
 
 export default function ManagerDashboard() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const login = searchParams.get("login");
-  const password = searchParams.get("password");
-  const accesslevel = searchParams.get("accesslevel");
-
   const [selected, setSelected] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const componentsMap = {
     manageUsers: ManageUsers,
     serviceMap: ServiceMap,
+    logout: Logout
   };
   const componentsList = [
     { label: "Gerenciar Usuários", key: "manageUsers" },
     { label: "Consultar mapa de atendimentos", key: "serviceMap" },
+    { label: "Sair", key: "logout"}
   ];
   const SelectedComponent = componentsMap[selected];
 

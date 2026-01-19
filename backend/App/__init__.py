@@ -7,13 +7,21 @@ from App.controllers.location_controller import location_bp
 from App.controllers.resident_controller import resident_bp
 from App.controllers.type_service_controller import type_service_bp
 from App.controllers.service_controller import service_bp
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
     db.init_app(app)
-    cors.init_app(app)
+    cors.init_app(
+        app,
+        supports_credentials=True,
+        origins=[os.getenv("CORS_ORIGINS")]
+    )
     migrate.init_app(app, db)
 
     app.register_blueprint(auth_bp)
