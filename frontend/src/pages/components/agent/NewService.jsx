@@ -28,28 +28,28 @@ export default function NewService() {
         formState: { errors, isSubmitting }
     } = useForm();
 
+    const fetchData = async () => {
+        try {
+            const [residentsRes, servicesRes] = await Promise.all([
+                api.get("/residents/"),
+                api.get("/types_service/")
+            ]);
+            setResidents(residentsRes.data);
+            setServices(servicesRes.data);
+
+            const response = await api.get(
+                "/auth/me",
+                { withCredentials:true }
+            );                
+            setUserPID(response.data.public_id)
+            console.log(userPID);
+            
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [residentsRes, servicesRes] = await Promise.all([
-                    api.get("/residents/"),
-                    api.get("/types_service/")
-                ]);
-                setResidents(residentsRes.data);
-                setServices(servicesRes.data);
-
-                const response = await api.get(
-                    "/auth/me",
-                    { withCredentials:true }
-                );                
-                setUserPID(response.data.public_id)
-                console.log(userPID);
-                
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -64,7 +64,7 @@ export default function NewService() {
             
             setLoadingAdd(false);
             setShowAddModal(false);
-            navigate(0);
+            fetchData();
         } catch (error) {
             console.error(error);
             alert("Erro ao adicionar tipo de serviço. Tente novamente");
@@ -226,7 +226,9 @@ export default function NewService() {
                     <span className="text-red-500">{errors.hour.message}</span>
                 )}
 
-                <Button type="button" onClick={getLocation}>
+                <Button 
+                    type="button" 
+                    onClick={getLocation}>
                     {loading ? (
                         <div className="flex items-center gap-2 justify-center">
                             <Loading />
@@ -269,8 +271,9 @@ export default function NewService() {
                         ))}
                     </select>
                     <button
+                        type="button"
                         onClick={() => setShowAddModal(true)}
-                        className='text-green-500 hover:text-green-600 transition pl-4 pb-2'
+                        className='text-green-500 hover:text-green-600 transition pl-1 pb-2'
                     >
                         <PlusCircle size={28}/>
                     </button>
@@ -289,7 +292,9 @@ export default function NewService() {
                 />
 
 
-                <Button type="submit" disabled={isSubmitting}>
+                <Button 
+                    type="submit" 
+                    disabled={isSubmitting}>
                     {isSubmitting ?( 
                         <span>
                             <Loading/>
@@ -317,6 +322,7 @@ export default function NewService() {
 
                         <div className="flex justify-end gap-3">
                             <button
+                                type="button"
                                 onClick={() => {
                                     setShowAddModal(false);
                                 }}
@@ -326,6 +332,7 @@ export default function NewService() {
                             </button>
 
                             <button
+                            type="button"
                                 onClick={handleAddType}
                                 className="px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600"
                             >

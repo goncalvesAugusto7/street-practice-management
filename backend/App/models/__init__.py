@@ -132,7 +132,7 @@ class Service(db.Model):
     def to_dict(self):
         return {
             "public_id": self.public_id,
-            "date": self.date.strftime('%H:%m:%S %d/%m/%Y'),
+            "date": self.date.astimezone(ZoneInfo("America/Sao_Paulo")).strftime('%H:%M:%S %d/%m/%Y'),
             "observations": self.observations,
             "health_worker": self.health_worker.to_dict() if self.health_worker else None,
             "resident": self.resident.to_dict() if self.resident else None,
