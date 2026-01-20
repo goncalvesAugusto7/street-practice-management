@@ -13,6 +13,7 @@ import DailyAppointments from "../components/DailyAppointments";
 import api from "../services/api";
 
 export default function ManagerDashboard() {
+  const navigate = useNavigate(); 
   const [selected, setSelected] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [myServices, setMyServices] = useState({});

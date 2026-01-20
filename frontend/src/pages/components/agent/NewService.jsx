@@ -316,7 +316,7 @@ export default function NewService() {
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => {
-                                    showAddModal(false);
+                                    setShowAddModal(false);
                                 }}
                                 className="px-4 py-2 rounded-lg border border-slate-300 text-slate-600"
                             >
