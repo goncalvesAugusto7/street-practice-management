@@ -96,6 +96,7 @@ export default function RegisterResident() {
                 <p className="justify-center flex">Histórico clínico inicial</p>
                 <textarea
                     rows={4}
+                    maxLength={500}
                     className="bg-slate-200 shadow border border-slate-300 rounded-md"
                     {...register("initialClinicalHistory")}
                 />

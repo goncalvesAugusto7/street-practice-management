@@ -4,6 +4,7 @@ import { Globe, Check } from "lucide-react";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import api from "../../../services/api";
+import Loading from "../../../components/LoadingIcon";
 
 export default function NewService() {
     const [residents, setResidents] = useState([]);
@@ -49,6 +50,7 @@ export default function NewService() {
 
     const getLocation = (event) => {
         event.preventDefault();
+        setLoading(true);
 
         if (!navigator.geolocation) {
             alert("Geolocalização não suportada");
@@ -65,6 +67,7 @@ export default function NewService() {
                 clearErrors("location");
                 console.log("Localização obtida com sucesso: ", position.coords.latitude+","+position.coords.longitude)
                 setUserLocationFeedback("Localização registrada")
+                setLoading(false);
             },
             (error) => {
                 switch (error.code) {
@@ -199,7 +202,16 @@ export default function NewService() {
                 )}
 
                 <Button type="button" onClick={getLocation}>
-                    <Globe size={20} /> Registrar localização
+                    {loading ? (
+                        <div className="flex items-center gap-2 justify-center">
+                            <Loading />
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2 justify-center">
+                            <Globe size={20} /> 
+                            Registrar localização
+                        </div>
+                    )}
                 </Button>
 
                 {locationSaved && (
@@ -243,7 +255,13 @@ export default function NewService() {
 
 
                 <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Registrando..." : "Registrar"}
+                    {isSubmitting ?( 
+                        <span>
+                            <Loading/>
+                        </span>
+                        ) : (
+                            "Registrar"
+                        )}
                 </Button>
             </form>
         </div>

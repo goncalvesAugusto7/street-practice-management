@@ -76,7 +76,7 @@ class Resident(db.Model):
         return {
             "public_id": self.public_id,
             "name": self.name,
-            "date_of_birth": self.date_of_birth,
+            "date_of_birth": self.date_of_birth.strftime('%d/%m/%Y'),
             "sex": self.sex,
             "initial_clinical_history": self.initial_clinical_history
         }

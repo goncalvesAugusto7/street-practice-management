@@ -1,5 +1,6 @@
 import { useState } from "react";
 import RegisterResident from "./components/agent/RegisterResident";
+import ConsultResidents from "./components/agent/ConsultResidents";
 import NewService from "./components/agent/NewService";
 import ServiceMap from "./components/ServiceMap";
 import Header from "../components/Header";
@@ -12,12 +13,14 @@ export default function AgentDashboard() {
   const componentsMap = {
     newService: NewService,
     registerResident: RegisterResident,
+    consultResidents: ConsultResidents,
     serviceMap: ServiceMap,
     logout: Logout,
   };
   const componentsList = [
     { label: "Novo Atendimento", key: "newService" },
     { label: "Cadastrar Morador", key: "registerResident" },
+    { label: "Consultar Moradores", key: "consultResidents" },
     { label: "Consultar mapa de atendimentos", key: "serviceMap" },
     { label: "Sair", key: "logout"}
   ];

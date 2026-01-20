@@ -12,6 +12,7 @@ import "leaflet/dist/leaflet.css";
 import { AuthProvider } from './context/AuthProvider.jsx'
 import { ProtectedRoute } from './context/ProtectedRoute.jsx'
 import Unauthorized from './pages/Unauthorized.jsx'
+import Resident from './pages/Resident.jsx'
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
       {
         path: "/agente",
         element: <AgentDashboard/>
-      }
+      },
+      {
+          path: "/resident/:public_id",
+          element: <Resident />
+      },
     ]
   },
   
@@ -53,7 +58,11 @@ const router = createBrowserRouter([
       {
           path: "/admin/profile/add",
           element: <AddUser />
-      }
+      },
+      {
+          path: "/resident/:public_id",
+          element: <Resident />
+      },
     ]
   }
 ]);
