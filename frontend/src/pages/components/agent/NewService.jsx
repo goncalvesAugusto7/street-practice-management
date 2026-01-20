@@ -17,7 +17,7 @@ export default function NewService() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [loadingAdd, setLoadingAdd] = useState(false);
     const [newDescription, setNewDescription] = useState("");
-    const navigator = useNavigate();
+    const navigate = useNavigate();
 
     const {
         register,
@@ -64,7 +64,7 @@ export default function NewService() {
             
             setLoadingAdd(false);
             setShowAddModal(false);
-            navigator(0);
+            navigate(0);
         } catch (error) {
             console.error(error);
             alert("Erro ao adicionar tipo de serviço. Tente novamente");
@@ -77,6 +77,8 @@ export default function NewService() {
 
         if (!navigator.geolocation) {
             alert("Geolocalização não suportada");
+            setUserLocationFeedback("Seu navegador não tem suporte para geolocalização");
+            setLoading(false)
             return;
         }
 
