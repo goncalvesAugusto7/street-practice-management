@@ -41,9 +41,9 @@ def create_service():
         except ValueError:
             return jsonify({"error": "Formato de data inválido."}), 400
 
-        user_id         =   User.get_id_by_pucblic_id(data["health_worker_id"])
-        resident_id     =   Resident.get_id_by_pucblic_id(data["resident_id"])
-        type_service_id =   Type_Service.get_id_by_pucblic_id(data["type_service_id"])
+        user_id         =   User.get_id_by_public_id(data["health_worker_id"])
+        resident_id     =   Resident.get_id_by_public_id(data["resident_id"])
+        type_service_id =   Type_Service.get_id_by_public_id(data["type_service_id"])
 
 
         service = Service(
@@ -70,7 +70,25 @@ def create_service():
 def get_json():
     services = Service.query.all()
 
-    return jsonify([service.to_dict() for service in services])
+    return jsonify([service.to_dict() for service in services]), 200
+
+@service_bp.route('/<user_public_id>', methods=['GET'])
+def get_services_by_user(user_public_id):
+    try:
+        user_id = User.get_id_by_public_id(user_public_id)
+
+        if not user_id:
+            return jsonify({"error": "Usuário não encontrado"}), 401
+
+        services = Service.query.filter_by(health_worker_id=user_id)
+
+        if not services:
+            return jsonify({"error": "Atendimento não encontrado"}), 401
+
+        return jsonify([service.to_dict() for service in services]), 200
+    
+    except SQLAlchemyError as e:
+        return jsonify({"error": "Erro ao buscar serviço.", "details": str(e)}), 500
 
 @service_bp.route('/<public_id>', methods=['GET'])
 def get_service(public_id):

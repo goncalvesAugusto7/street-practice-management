@@ -33,7 +33,7 @@ const router = createBrowserRouter([
         element: <AgentDashboard/>
       },
       {
-          path: "/resident/:public_id",
+          path: "agente/resident/:public_id",
           element: <Resident />
       },
     ]
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
           element: <AddUser />
       },
       {
-          path: "/resident/:public_id",
+          path: "admin/resident/:public_id",
           element: <Resident />
       },
     ]

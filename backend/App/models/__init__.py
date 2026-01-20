@@ -4,6 +4,7 @@ import uuid
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -26,7 +27,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
     
-    def get_id_by_pucblic_id(public_id):
+    def get_id_by_public_id(public_id):
         user = db.session.query(User.id).filter_by(public_id=public_id).first()
         return user.id if user else None
 
@@ -81,7 +82,7 @@ class Resident(db.Model):
             "initial_clinical_history": self.initial_clinical_history
         }
 
-    def get_id_by_pucblic_id(public_id):
+    def get_id_by_public_id(public_id):
         resident = db.session.query(Resident.id).filter_by(public_id=public_id).first()
         return resident.id if resident else None
 
@@ -94,7 +95,7 @@ class Type_Service(db.Model):
 
     services = db.relationship("Service", back_populates="type_service")
 
-    def get_id_by_pucblic_id(public_id):
+    def get_id_by_public_id(public_id):
         typeService = db.session.query(Type_Service.id).filter_by(public_id=public_id).first()
         return typeService.id if typeService else None
 
@@ -124,14 +125,18 @@ class Service(db.Model):
     location = db.relationship("Location", back_populates='service', uselist=False)
     type_service = db.relationship("Type_Service", back_populates='services')
 
+    def get_id_by_public_id(public_id):
+        service = db.session.query(Service.id).filter_by(public_id=public_id).first()
+        return service.id if service else None
+    
     def to_dict(self):
         return {
             "public_id": self.public_id,
-            "date": self.date.isoformat(),
+            "date": self.date.strftime('%H:%m:%S %d/%m/%Y'),
             "observations": self.observations,
             "health_worker": self.health_worker.to_dict() if self.health_worker else None,
             "resident": self.resident.to_dict() if self.resident else None,
             "location": self.location.to_dict() if self.location else None,
             "type_service": self.type_service.to_dict() if self.type_service else None,
-            "created_at" : self.created_at
+            "created_at" : self.created_at.replace(tzinfo=ZoneInfo("UTC")).astimezone(ZoneInfo("America/Sao_Paulo")).strftime('%H:%m:%S %d/%m/%Y')
         }

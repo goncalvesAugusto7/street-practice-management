@@ -1,14 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState, navi } from "react";
+import { useNavigate } from "react-router-dom";
 import RegisterResident from "./components/agent/RegisterResident";
 import ConsultResidents from "./components/agent/ConsultResidents";
 import NewService from "./components/agent/NewService";
 import ServiceMap from "./components/ServiceMap";
 import Header from "../components/Header";
 import Logout from "../components/Logout";
+import DashboardHeader from "../components/DashboardHeader";
+import HealthIndicators from "../components/HealthIndicators";
+import DailyAppointments from "../components/DailyAppointments";
+import api from "../services/api";
 
 export default function AgentDashboard() {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [services, setServices] = useState({});
+
+  useEffect(() => {
+    const getMyself = async () => {
+      const response = await api.get(
+        "/auth/me",
+        { withCredentials: true }
+      )
+
+      const userResponse = await api.get(
+        `/users/${response.data.public_id}`
+      )
+
+      const serviceResponse = await api.get(
+        `/services/${response.data.public_id}`
+      )
+
+      setServices(serviceResponse.data);
+
+    }
+    getMyself();
+  }, []);
 
   const componentsMap = {
     newService: NewService,
@@ -18,6 +46,7 @@ export default function AgentDashboard() {
     logout: Logout,
   };
   const componentsList = [
+    { label: "Home", key: "home"},
     { label: "Novo Atendimento", key: "newService" },
     { label: "Cadastrar Morador", key: "registerResident" },
     { label: "Consultar Moradores", key: "consultResidents" },
@@ -27,8 +56,12 @@ export default function AgentDashboard() {
   const SelectedComponent = componentsMap[selected];
 
   const handleMenuItemClick = (item) => {
-    setSelected(item.key);
-    setIsMenuOpen(false);
+    if (item.key == "home") {
+      navigate(0);
+    } else {
+      setSelected(item.key);
+      setIsMenuOpen(false);
+    }
   };
 
   return (
@@ -40,14 +73,6 @@ export default function AgentDashboard() {
         isMenuOpen={isMenuOpen}
         toggleMenu={() => {
           setIsMenuOpen(!isMenuOpen);
-          console.log(
-            "foi clicado. menu aberto? " +
-              isMenuOpen +
-              ". selected: " +
-              selected +
-              ". lista de componentes: "
-          );
-          console.table(componentsList[0]);
         }}
       />
 
@@ -58,9 +83,18 @@ export default function AgentDashboard() {
           {SelectedComponent ? (
             <SelectedComponent />
           ) : (
-            <p className="text-gray-500 text-center py-10">
-              Selecione uma opção do menu.
-            </p>
+            <div>
+              <DashboardHeader/>
+
+              <HealthIndicators
+                services={services}
+              />
+
+              <DailyAppointments 
+                services={services}
+              />
+
+            </div>
           )}
         </div>
       </main>

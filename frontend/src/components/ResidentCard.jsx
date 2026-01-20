@@ -1,11 +1,26 @@
 import { Link } from 'react-router-dom'
 import { ChevronRight, User, UserRound } from 'lucide-react';
 import { MdOutlineMan, MdOutlineWoman } from "react-icons/md";
+import { useEffect, useState } from 'react';
+import api from '../services/api';
 
 export default function ResidentCard(props) {
+    const [accessLevel, setAccessLvel] = useState();
+
+    useEffect (() => {
+        const getMyself = async () =>{
+            const response = await api.get(
+                "/auth/me"
+            )
+            setAccessLvel(response.data.access_level)
+        }
+        getMyself();
+    }, []);
+
+    const url = accessLevel == 0 ? `/admin/resident/${props.public_id}` : `/agente/resident/${props.public_id}`
 
     return (
-        <Link to={`/resident/${props.public_id}`} className='no-underline mb-2 w-full flex'>
+        <Link to={url} className='no-underline mb-2 w-full flex'>
             <div className='flex w-full items-center md:justify-between bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl cursor-pointer p-4 transition-all shadow-sm'>
                
                 {props.sex == "M"

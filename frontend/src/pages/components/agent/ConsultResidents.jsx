@@ -26,11 +26,7 @@ export default function ConsultResidents() {
       }
     });
   };
-/*
-  function formatCPF(cpf) {
-    return cpf.replace(/[^0-9]/g, "");
-  }
-*/
+
   const filteredResidents = residents.filter((resident) => {
     const matchText =
       resident.name.toLowerCase().includes(targetResidentInfo.toLocaleLowerCase())

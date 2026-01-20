@@ -62,7 +62,7 @@ export default function Header({
                   <button
                     key={item.key || item.label}
                     onClick={() => onMenuItemClick(item)}
-                    className="text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-md hover:bg-blue-50 transition"
+                    className="text-gray-700 text-xs hover:text-blue-600 font-medium px-1 py-2 rounded-md hover:bg-blue-50 transition"
                   >
                     {item.label}
                   </button>
