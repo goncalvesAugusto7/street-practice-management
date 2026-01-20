@@ -1,10 +1,11 @@
 import { use, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Globe, Check } from "lucide-react";
+import { Globe, Check, PlusCircle } from "lucide-react";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import api from "../../../services/api";
 import Loading from "../../../components/LoadingIcon";
+import { useNavigate } from "react-router-dom";
 
 export default function NewService() {
     const [residents, setResidents] = useState([]);
@@ -13,6 +14,10 @@ export default function NewService() {
     const [userLocationFeedback, setUserLocationFeedback] = useState("");
     const [loading, setLoading] = useState(false);
     const [userPID, setUserPID] = useState("");
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [loadingAdd, setLoadingAdd] = useState(false);
+    const [newDescription, setNewDescription] = useState("");
+    const navigator = useNavigate();
 
     const {
         register,
@@ -47,6 +52,24 @@ export default function NewService() {
 
         fetchData();
     }, []);
+
+    const handleAddType = async () => {
+        setLoadingAdd(true);
+
+        try {
+            await api.post(
+                `/types_service/`,
+                {description: newDescription}
+            );
+            
+            setLoadingAdd(false);
+            setShowAddModal(false);
+            navigator(0);
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao adicionar tipo de serviço. Tente novamente");
+        }
+    }
 
     const getLocation = (event) => {
         event.preventDefault();
@@ -229,22 +252,32 @@ export default function NewService() {
                 )}
 
                 <p className="justify-center flex">Atendimento prestado</p>
-                <select
-                    className="border p-2 rounded"
-                    {...register("service", {
-                        required: "Selecione o tipo de serviço"
-                    })}
-                >
-                    <option value="">Selecione o tipo de serviço</option>
-                    {services.map((s) => (
-                        <option key={s.public_id} value={s.public_id}>
-                            {s.description}
-                        </option>
-                    ))}
-                </select>
-                {errors.service && (
-                    <span className="text-red-500">{errors.service.message}</span>
-                )}
+                <div className="flex justify-center items-center">
+                    <select
+                        className="border p-2 rounded"
+                        {...register("service", {
+                            required: "Selecione o tipo de serviço"
+                        })}
+                    >
+                        <option value="">Selecione o tipo de serviço</option>
+                        {services.map((s) => (
+                            <option key={s.public_id} value={s.public_id}>
+                                {s.description}
+                            </option>
+                        ))}
+                    </select>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className='text-green-500 hover:text-green-600 transition pl-4 pb-2'
+                    >
+                        <PlusCircle size={28}/>
+                    </button>
+
+                    {errors.service && (
+                        <span className="text-red-500">{errors.service.message}</span>
+                    )}
+
+                </div>
 
                 <p className="justify-center flex">Observações</p>
                 <textarea
@@ -264,6 +297,43 @@ export default function NewService() {
                         )}
                 </Button>
             </form>
+
+            {showAddModal && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg">
+                        <h2 className="text-lg font-bold text-slate-800 mb-4">
+                            Novo Tipo de Serviço
+                        </h2>
+
+                        <textarea
+                            value={newDescription}
+                            onChange={(e) => setNewDescription(e.target.value)}
+                            rows={2}
+                            maxLength={255}
+                            className="w-full border rounded-lg p-3 text-sm mb-6"
+                        />
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => {
+                                    showAddModal(false);
+                                }}
+                                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-600"
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                onClick={handleAddType}
+                                className="px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600"
+                            >
+                                Confirmar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

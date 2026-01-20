@@ -10,8 +10,8 @@ export default function Profile() {
     const [resident,setResident] = useState({});
     const [showConfirm,setShowConfirm] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [loadingEdit, setLoadingEdit] = useState(false);
     const [clinicalHistory, setClinicalHistory] = useState(false);
-    const [loadingEdit, setLoadingEdit] = useState(false)
     const navigate = useNavigate();
 
     const handleDelete = () => {
